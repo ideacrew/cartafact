@@ -5,7 +5,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :documents, only: [] do
         collection do
-          get :download
+          post :upload
+        end
+
+        member do
+          get :find
+          get :where
         end
       end
     end
