@@ -14,6 +14,7 @@ class DocumentSerializer
   end
 
   attribute :url do |object|
-    Base64.encode64('/tmp' + object.file.url)
+    url = Rails.env.production? ? object.file.url(response_content_disposition: 'attachment;') : ('/tmp' + object.file.url)
+    Base64.encode64(url)
   end
 end
