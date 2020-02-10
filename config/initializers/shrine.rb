@@ -16,8 +16,8 @@ storage_options = if Rails.env.production?
   }
 else
   {
-    cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"), # temporary
-    store: Shrine::Storage::FileSystem.new("public", prefix: "uploads"),       # permanent
+    cache: Shrine::Storage::FileSystem.new("/tmp", prefix: "uploads/cache"), # temporary
+    store: Shrine::Storage::FileSystem.new("/tmp", prefix: "uploads"),       # permanent
   }
 end
 

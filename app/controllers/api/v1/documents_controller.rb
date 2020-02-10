@@ -4,9 +4,9 @@ class Api::V1::DocumentsController < ApplicationController
     result = ::Cartafact::Entities::Operations::Documents::Upload.new.call(params_hash)
 
     if result.success?
-      render :json => {status: "success", reference_id: ''}
+      render :json => {status: "success", reference_id: result.value![:reference_id]}
     else
-      render :json => {status: "failure", errors: ''}
+      render :json => {status: "failure", errors: result.failure[:message]}
     end
   end
 

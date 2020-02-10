@@ -6,11 +6,11 @@ Rails.application.routes.draw do
       resources :documents, only: [] do
         collection do
           post :upload
+          get :where
         end
 
         member do
           get :find
-          get :where
         end
       end
     end
