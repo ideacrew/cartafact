@@ -47,6 +47,7 @@ gem 'dry-container',            '~> 0.7'
 gem 'dry-auto_inject',          '~> 0.6'
 gem 'dry-transaction',          '~> 0.13'
 gem 'dry-initializer',          '~> 3.0'
+gem 'jwt',                      '~> 2.2.1'
 
 
 group :development, :test do
