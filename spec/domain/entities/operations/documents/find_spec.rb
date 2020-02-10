@@ -14,7 +14,7 @@ RSpec.describe Cartafact::Entities::Operations::Documents::Find do
     end
 
     it "should have document response" do
-      expect(subject.value![:document].keys.sort).to eq [:creator, :date, :description, :format, :id, :identifier, :language, :source, :subjects, :title, :type, :version]
+      expect(subject.value![:document].keys.sort).to eq [:creator, :date, :description, :extension, :format, :id, :identifier, :language, :size, :source, :subjects, :title, :type, :url, :version]
     end
   end
 
