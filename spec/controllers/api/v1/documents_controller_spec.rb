@@ -2,6 +2,12 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::DocumentsController, type: :controller do
   let(:tempfile) { Tempfile.new('test.pdf') }
+  let(:key) {Rails.application.credentials[:enroll_dc]}
+  let(:token) {JWT.encode('token', key)}
+
+  before :each do
+    @request.headers['Authorization'] = token
+  end
   
   describe "#upload" do
 
@@ -74,7 +80,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     context "failure with invalid params" do
 
       before :each do
-        get :find, params: {authorized_subjects: [{id: 'abc', type: 'consumer'}], id: document.id}
+        get :find, params: {authorized_identity: {user_id: 'abc', system: 'enroll_dc'}, id: document.id}
       end
 
       it "should be success" do
@@ -124,7 +130,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     context "failure with invalid params" do
 
       before :each do
-        get :where, params: {authorized_subjects: [{id: 'abc', type: 'consumer'}], id: document.id}
+        get :where, params: {authorized_identity: {user_id: 'abc', system: 'enroll_dc'}, id: document.id}
       end
 
       it "should be success" do
