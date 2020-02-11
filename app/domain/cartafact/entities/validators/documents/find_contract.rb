@@ -20,7 +20,3 @@ module Cartafact
     end
   end
 end
-
-
-# options = {authorized_identity: {user_id: 'abc', system: 'enroll_dc'}, authorized_subjects: [{id: 'abc', type: 'consumer'}]}
-# Cartafact::Documents::Download.new.call(options)
