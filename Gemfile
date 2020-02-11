@@ -29,7 +29,7 @@ gem "aws-sdk-s3", "~> 1.14"
 
 # Settings, validation and dependency injection
 # Fix this # toDo
-# gem 'resource_registry',  git:  'https://github.com/ideacrew/resource_registry.git', branch: 'master'
+gem 'resource_registry',  git:  'https://github.com/ideacrew/resource_registry.git', branch: 'branch_0.3.2'
 gem 'fast_jsonapi'
 
 gem 'shrine-mongoid',           '~> 1.0'
@@ -41,7 +41,7 @@ gem 'dry-matcher',              '~> 0.7'
 gem 'dry-validation',           '~> 1.2'
 gem 'dry-core',                 '~> 0.4'
 gem 'dry-struct',               '~> 1.0'
-# gem 'dry-types',                '~> 1.2'
+gem 'dry-types',                '~> 1.2'
 gem 'dry-inflector',            '~> 0.1'
 gem 'dry-container',            '~> 0.7'
 gem 'dry-auto_inject',          '~> 0.6'
