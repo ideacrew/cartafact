@@ -3,10 +3,18 @@ require 'rails_helper'
 RSpec.describe Api::V1::DocumentsController, type: :controller do
   let(:tempfile) { Tempfile.new('test.pdf') }
   let(:key) {Rails.application.credentials[:enroll_dc]}
-  let(:token) {JWT.encode('token', key)}
+
+  let(:authorization_successful) do
+    double(success?: true)
+  end
 
   before :each do
-    @request.headers['Authorization'] = token
+    allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+      {
+        requesting_identity_header: nil,
+        requesting_identity_signature_header: nil
+      }
+    ).and_return(authorization_successful)
   end
   
   describe "#upload" do
@@ -106,6 +114,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
   describe "#where" do
     let(:document) {FactoryBot.create(:document)}
+
     context "succesful with valid params" do
 
       before :each do

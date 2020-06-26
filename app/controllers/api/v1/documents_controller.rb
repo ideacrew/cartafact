@@ -1,5 +1,7 @@
 class Api::V1::DocumentsController < ApplicationController
 
+  before_action :verify_authorization_headers_present
+
   def upload
     result = ::Cartafact::Entities::Operations::Documents::Upload.new.call(params_hash)
 
@@ -38,5 +40,22 @@ class Api::V1::DocumentsController < ApplicationController
 
   def params_hash
     params.permit!.to_h
+  end
+
+  def verify_authorization_headers_present
+    # req_identity = "X-RequestingIdentity"
+    # req_identity_signature = "X-RequestingIdentitySignature"
+    req_identity = request.headers["HTTP_X_REQUESTINGIDENTITY"]
+    req_identity_signature = request.headers["HTTP_X_REQUESTINGIDENTITYSIGNATURE"]
+    validation = Cartafact::Operations::ValidateResourceIdentitySignature.call(
+      {
+        requesting_identity_header: req_identity,
+        requesting_identity_signature_header: req_identity_signature
+      }
+    )
+    unless validation.success?
+      render status: 403, json: {error: "not_authorized"}
+      return nil
+    end
   end
 end
