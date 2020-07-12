@@ -2,10 +2,15 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::DocumentsController, type: :controller do
   let(:tempfile) { Tempfile.new('test.pdf') }
-  let(:key) {Rails.application.credentials[:enroll_dc]}
+  let(:key) { Rails.application.credentials[:enroll_dc] }
+  let(:authorization_information) do
+    instance_double(
+      Cartafact::Entities::RequestingIdentity
+    )
+  end
 
   let(:authorization_successful) do
-    double(success?: true)
+    double(success?: true, value!: authorization_information)
   end
 
   before :each do

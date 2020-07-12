@@ -1,8 +1,10 @@
 class Api::V1::DocumentsController < ApplicationController
 
-  before_action :verify_authorization_headers_present
-
   def upload
+    authorization_information = verify_authorization_headers_present
+    unless authorization_information
+      return nil
+    end
     result = ::Cartafact::Entities::Operations::Documents::Upload.new.call(params_hash)
 
     if result.success?
@@ -14,6 +16,10 @@ class Api::V1::DocumentsController < ApplicationController
 
   # query for documents. Returns an array. Option to return document blobs defaults to false
   def where
+    authorization_information = verify_authorization_headers_present
+    unless authorization_information
+      return nil
+    end
     result = ::Cartafact::Entities::Operations::Documents::Where.new.call(params_hash)
     if result.success?
       render :json => {status: "success", documents: result.value![:documents], message: ''}
@@ -34,6 +40,10 @@ class Api::V1::DocumentsController < ApplicationController
 
   # finds document & renders it to client 
   def show
+    authorization_information = verify_authorization_headers_present
+    unless authorization_information
+      return nil
+    end
   end
 
   private
@@ -57,5 +67,6 @@ class Api::V1::DocumentsController < ApplicationController
       render status: 403, json: {error: "not_authorized"}
       return nil
     end
+    validation.value!
   end
 end
