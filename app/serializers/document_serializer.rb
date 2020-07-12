@@ -3,7 +3,14 @@ class DocumentSerializer
   attributes :title, :creator, :identifier, :description, :language, :format, :source, :date, :creator
 
   attribute :type, &:document_type
-  attribute :subjects, &:authorized_subjects
+  attribute :subjects do |object|
+    object.subjects.map do |subj|
+      {
+        id: subj.subject_id,
+        type: subj.subject_type
+      }
+    end
+  end
 
   attribute :version do |object|
     nil

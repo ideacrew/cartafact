@@ -5,8 +5,7 @@ module Cartafact
     class Document < Dry::Struct
       transform_keys(&:to_sym)
 
-      attribute :authorized_subjects, ::Cartafact::Entities::Types::Coercible::Array
-      attribute :authorized_identity, ::Cartafact::Entities::Types::Coercible::Hash
+      attribute :subjects, ::Cartafact::Entities::Types::Coercible::Array.of(Hash)
       attribute? :path, ::Cartafact::Entities::Types::Coercible::String
       attribute? :document_type, ::Cartafact::Entities::Types::Coercible::String
       attribute? :id, ::Cartafact::Entities::Types::Coercible::String

@@ -1,38 +1,50 @@
 require 'rails_helper'
 
 RSpec.describe Cartafact::Entities::Operations::Documents::Where do
-  let(:subject) {Cartafact::Entities::Operations::Documents::Where.new.call(attrs)}
-  let!(:document) {FactoryBot.create(:document, authorized_identity: {user_id: 'abc', system: 'enroll_dc'}, authorized_subjects: [{id: 'abc', type: 'consumer'}])}
+  let(:subject) { Cartafact::Entities::Operations::Documents::Where.new.call(authorization_information) }
+  let(:document) {FactoryBot.create(:document, subjects: [{subject_id: 'abc', subject_type: 'consumer'}])}
 
-  context 'with valid params' do
-    let(:attrs) {
-      {authorized_identity: document.authorized_identity, authorized_subjects: document.authorized_subjects}
-    }
-
-    it "should be success" do
-      expect(subject.success?).to be_truthy
+  context 'with valid params but no matching documents' do
+    let(:authorization_information) do
+      instance_double(
+        Cartafact::Entities::RequestingIdentity,
+        authorized_subjects: []
+      )
     end
 
-    it 'should return an documents array in response' do
-      expect(subject.value![:documents]).to be_an_instance_of(Array)
-    end
-
-    it "should have documents json response" do
-      expect(subject.value![:documents].first.keys.sort).to eq [:creator, :date, :description, :extension, :format, :id, :identifier, :language, :size, :source, :subjects, :title, :type, :url, :version]
+    it "fails" do
+      expect(subject.success?).to be_falsey
     end
   end
 
-  context 'with invalid params' do
-    let(:attrs) {
-      {authorized_identity: {user_id: 'abc', system: 'enroll_dc'}}
-    }
+  context 'with valid params and matching documents' do
 
-    it "should be failure" do
-      expect(subject.success?).to be_falsey
+    let(:matching_subjects) do
+      document.subjects.map do |d_sub|
+        double(
+          id: d_sub.subject_id,
+          type: d_sub.subject_type
+        )
+      end
     end
 
-    it "should have documents response" do
-      expect(subject.failure[:documents]).to eq []
+    let(:authorization_information) do
+      instance_double(
+        Cartafact::Entities::RequestingIdentity,
+        authorized_subjects: matching_subjects
+      )
+    end
+
+    it "is successful" do
+      expect(subject.success?).to be_truthy
+    end
+
+    it "has documents json response" do
+      expect(subject.value!.first.keys.sort).to eq [:creator, :date, :description, :extension, :format, :id, :identifier, :language, :size, :source, :subjects, :title, :type, :url, :version]
+    end
+
+    it "properly serializes the subjects" do
+      expect(subject.value!.first[:subjects]).to eq [{id: 'abc', type: 'consumer'}]
     end
   end
 end

@@ -8,8 +8,6 @@ RSpec.describe Document, :type => :model do
   it { should validate_presence_of(:format) }
   it { should validate_presence_of(:source) }
   it { should validate_presence_of(:language) }
-  it { should validate_presence_of(:authorized_subjects) }
-  it { should validate_presence_of(:authorized_identity) }
   it { should validate_presence_of(:document_type) }
   it { should validate_presence_of(:file_data) }
 end

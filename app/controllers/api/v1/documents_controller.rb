@@ -14,17 +14,17 @@ class Api::V1::DocumentsController < ApplicationController
     end
   end
 
-  # query for documents. Returns an array. Option to return document blobs defaults to false
-  def where
+  # query for documents. Returns an array.
+  def index
     authorization_information = verify_authorization_headers_present
     unless authorization_information
       return nil
     end
-    result = ::Cartafact::Entities::Operations::Documents::Where.new.call(params_hash)
+    result = ::Cartafact::Entities::Operations::Documents::Where.call(authorization_information)
     if result.success?
-      render :json => {status: "success", documents: result.value![:documents], message: ''}
+      render :json => result.value!, status: :ok
     else
-      render :json => {status: "failure", documents: result.failure[:documents], message: ''}
+      render :json => [], status: :ok
     end
   end
 
@@ -40,6 +40,22 @@ class Api::V1::DocumentsController < ApplicationController
 
   # finds document & renders it to client 
   def show
+    authorization_information = verify_authorization_headers_present
+    unless authorization_information
+      return nil
+    end
+    result = ::Cartafact::Entities::Operations::Documents::Show.call({
+      authorization: authorization_information,
+      id: params[:id]
+    })
+    if result.success?
+      render :json => result.value!, status: :ok
+    else
+      render :blank => true, status: 404
+    end
+  end
+
+  def create
     authorization_information = verify_authorization_headers_present
     unless authorization_information
       return nil

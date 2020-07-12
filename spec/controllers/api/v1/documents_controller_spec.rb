@@ -5,12 +5,17 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
   let(:key) { Rails.application.credentials[:enroll_dc] }
   let(:authorization_information) do
     instance_double(
-      Cartafact::Entities::RequestingIdentity
+      Cartafact::Entities::RequestingIdentity,
+      authorized_subjects: []
     )
   end
 
   let(:authorization_successful) do
     double(success?: true, value!: authorization_information)
+  end
+
+  let(:authorization_failed) do
+    double(success?: false)
   end
 
   before :each do
@@ -36,7 +41,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
       it "should return json" do
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response["status"]).to eq "success"
+        expect(parsed_response).to eq ["success"]
       end
 
       it "should return document reference id" do
@@ -52,17 +57,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
       end
 
       it "should be success" do
-        expect(response).to have_http_status(:success)
-      end
-
-      it "should return json" do
-        parsed_response = JSON.parse(response.body)
-        expect(parsed_response["status"]).to eq "failure"
-      end
-
-      it "should return failure message" do
-        parsed_response = JSON.parse(response.body)
-        expect(parsed_response.keys.include? 'errors').to eq true
+        expect(response).to have_http_status(:not_authorized)
       end
     end
   end
@@ -117,48 +112,46 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     end
   end
 
-  describe "#where" do
-    let(:document) {FactoryBot.create(:document)}
+  describe "#index" do
+    let(:document_list) { [] }
 
     context "succesful with valid params" do
+      let(:document_result) do
+        double(success?: true, value!: document_list)
+      end
 
       before :each do
-        get :where, params: {authorized_identity: {user_id: 'abc', system: 'enroll_dc'}, authorized_subjects: [{id: 'abc', type: 'consumer'}], id: document.id}
+        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+          {
+            requesting_identity_header: nil,
+            requesting_identity_signature_header: nil
+          }).and_return(authorization_successful)
+        allow(::Cartafact::Entities::Operations::Documents::Where).to receive(:call).with(authorization_information).and_return(document_result)
+        get :index
       end
 
       it "should be success" do
-        expect(response).to have_http_status(:success)
-      end
-
-      it "should return json" do
-        parsed_response = JSON.parse(response.body)
-        expect(parsed_response["status"]).to eq "success"
+        expect(response).to have_http_status(:ok)
       end
 
       it "should return document metadata array" do
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response['documents']).to be_an_instance_of(Array)
+        expect(parsed_response).to be_an_instance_of(Array)
       end
     end
 
     context "failure with invalid params" do
-
       before :each do
-        get :where, params: {authorized_identity: {user_id: 'abc', system: 'enroll_dc'}, id: document.id}
+        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+          {
+            requesting_identity_header: nil,
+            requesting_identity_signature_header: nil
+          }).and_return(authorization_failed)
+          get :index
       end
 
       it "should be success" do
-        expect(response).to have_http_status(:success)
-      end
-
-      it "should return json" do
-        parsed_response = JSON.parse(response.body)
-        expect(parsed_response["status"]).to eq "failure"
-      end
-
-      it "should return empty array" do
-        parsed_response = JSON.parse(response.body)
-        expect(parsed_response['documents']).to eq []
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

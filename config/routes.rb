@@ -3,14 +3,14 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :documents, only: [] do
+      resources :documents, only: [:index, :show, :create] do
         collection do
           post :upload
-          get :where
         end
 
         member do
           get :find
+          get :download
         end
       end
     end

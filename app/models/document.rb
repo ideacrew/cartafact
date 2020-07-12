@@ -11,8 +11,8 @@ class Document
   # Entity responsible for making the resource - person, organization or service
   field :creator, type: String, default: "mhc"
 
-  # Controlled vocabulary w/classification codes. Mapped to ConsumerRole::VLP_DOCUMENT_KINDS
-  field :subject, type: String
+  # Dublin Core Meta-Data for the subjects of this document
+  embeds_many :subjects, class_name: "::DocumentSubject", inverse_of: :document
 
   # May include but is not limited to: an abstract, a table of contents, a graphical representation, or a free-text account of the resource
   field :description, type: String
@@ -56,13 +56,10 @@ class Document
 
   field :file_data, type: String
 
-  field :authorized_identity, type: Hash
-  field :authorized_subjects, type: Array
   field :document_type, type: String
 
-  validates_presence_of :title, :creator, :publisher, :type, :format, :source, :language, :authorized_subjects, :authorized_identity, :document_type, :file_data
-
-
+  validates_presence_of :title, :creator, :publisher, :type, :format, :source, :language, :document_type, :file_data
+  
   def path=(input)
     self.file = File.open(input) if File.exists? input
   end

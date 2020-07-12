@@ -8,21 +8,33 @@ module Cartafact
 
           include Dry::Transaction::Operation
 
+          def self.call(input)
+            self.new.call(input)
+          end
+
           def call(input)
-            result = Validators::Documents::WhereContract.new.call(input)
-
-            if result.success?
-              entity = Cartafact::Entities::Document.new(result.to_h)
-              documents = ::Document.all.where(:"authorized_subjects".in => entity.authorized_subjects)
-
-              return Failure({message: "No Documents found", meta_data: []}) if documents.blank?
-              output = documents.inject([]) do |result, document|
-                result << Serialize.new.call(document).value!
-                result
+              matching_criteria = search_params_from_entity(input.authorized_subjects)
+              return Failure(:no_subjects_specified) if matching_criteria.empty?
+              documents = ::Document.where("subjects" => 
+                { "$elemMatch" => 
+                { "$or" =>
+                matching_criteria } }
+              )
+              return Failure(:no_documents_found) if documents.empty?
+              
+              serialized_documents = documents.lazy.map do |doc|
+                ::DocumentSerializer.new(doc).serializable_hash[:data][:attributes]
               end
-              Success({message: 'Successfully retrieved documents', documents: output})
-            else
-              Failure({errors: result.errors.to_h, documents: []})
+
+              Success(serialized_documents)
+          end
+
+          def search_params_from_entity(authorized_subjects)
+            authorized_subjects.map do |a_subj|
+              {
+                "subject_id" => a_subj.id,
+                "subject_type" => a_subj.type
+              }
             end
           end
         end
