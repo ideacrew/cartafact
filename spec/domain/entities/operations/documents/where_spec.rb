@@ -40,7 +40,7 @@ RSpec.describe Cartafact::Entities::Operations::Documents::Where do
     end
 
     it "has documents json response" do
-      expect(subject.value!.first.keys.sort).to eq [:creator, :date, :description, :extension, :format, :id, :identifier, :language, :size, :source, :subjects, :title, :type, :url, :version]
+      expect(subject.value!.first.keys.sort).to eq [:creator, :date, :description, :extension, :format, :id, :identifier, :language, :size, :source, :subjects, :title, :type, :version]
     end
 
     it "properly serializes the subjects" do

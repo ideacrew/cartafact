@@ -17,57 +17,90 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
   let(:authorization_failed) do
     double(success?: false)
   end
-
-  before :each do
-    allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
-      {
-        requesting_identity_header: nil,
-        requesting_identity_signature_header: nil
-      }
-    ).and_return(authorization_successful)
-  end
   
-  describe "#upload" do
+  describe "#create" do
 
     context "succesful with valid params" do
 
       before :each do
-        post :upload, params: {authorized_identity: {user_id: 'abc', system: 'enroll_dc'}, authorized_subjects: [{id: 'abc', type: 'consumer'}], path: tempfile.path, document_type: 'vlp_doc'}
+        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+          {
+            requesting_identity_header: nil,
+            requesting_identity_signature_header: nil
+          }
+        ).and_return(authorization_successful)
+        post :create, params: {subjects: [{id: 'abc', type: 'consumer'}], path: tempfile.path, document_type: 'vlp_doc'}
       end
 
       it "should be success" do
         expect(response).to have_http_status(:success)
-      end
-
-      it "should return json" do
-        parsed_response = JSON.parse(response.body)
-        expect(parsed_response).to eq ["success"]
       end
 
       it "should return document reference id" do
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response.keys.include? 'reference_id').to eq true
+        expect(parsed_response['id']).not_to eq nil
       end
     end
 
-    context "failure with invalid params" do
+    context "with invalid params" do
 
       before :each do
-        post :upload, params: {authorized_subjects: [{id: 'abc', type: 'consumer'}], path: tempfile.path, document_type: 'vlp_doc'}
+        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+          {
+            requesting_identity_header: nil,
+            requesting_identity_signature_header: nil
+          }
+        ).and_return(authorization_successful)
+        post :create, params: {}
       end
 
-      it "should be success" do
-        expect(response).to have_http_status(:not_authorized)
+      it "is invalid" do
+        expect(response).to have_http_status("422")
+      end
+    end
+
+    context "when unauthorized" do
+
+      before :each do
+        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+          {
+            requesting_identity_header: nil,
+            requesting_identity_signature_header: nil
+          }
+        ).and_return(authorization_failed)
+        post :create, params: {subjects: [{id: 'abc', type: 'consumer'}], path: tempfile.path, document_type: 'vlp_doc'}
+      end
+
+      it "should be unauthorized" do
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
 
-  describe "#find" do
+  describe "#show" do
     let(:document) {FactoryBot.create(:document)}
     context "succesful with valid params" do
+      let(:document_json) { {} }
+
+      let(:find_success) do
+        double(
+          success?: true,
+          value!: document_json
+        )
+      end
 
       before :each do
-        get :find, params: {authorized_identity: {user_id: 'abc', system: 'enroll_dc'}, authorized_subjects: [{id: 'abc', type: 'consumer'}], id: document.id}
+        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+          {
+            requesting_identity_header: nil,
+            requesting_identity_signature_header: nil
+          }
+        ).and_return(authorization_successful)
+        allow(::Cartafact::Entities::Operations::Documents::Show).to receive(:call).with({
+          id: document.id,
+          authorization: authorization_information
+        }).and_return(find_success)
+        get :show, params: {id: document.id}
       end
 
       it "should be success" do
@@ -76,38 +109,49 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
       it "should return json" do
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response["status"]).to eq "success"
       end
 
       it "should return document metadata" do
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response['document']).to be_an_instance_of(Hash)
+        expect(parsed_response).to be_an_instance_of(Hash)
       end
     end
 
-    context "failure with invalid params" do
+    context "when unauthorized" do
 
       before :each do
-        get :find, params: {authorized_identity: {user_id: 'abc', system: 'enroll_dc'}, id: document.id}
+        get :show, params: { id: document.id}
       end
 
-      it "should be success" do
-        expect(response).to have_http_status(:success)
+      it "is forbidden" do
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context "when not found" do
+
+      let(:find_failure) do
+        double(
+          success?: false
+        )
       end
 
-      it "should return json" do
-        parsed_response = JSON.parse(response.body)
-        expect(parsed_response["status"]).to eq "failure"
+      before :each do
+        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+          {
+            requesting_identity_header: nil,
+            requesting_identity_signature_header: nil
+          }
+        ).and_return(authorization_successful)
+        allow(::Cartafact::Entities::Operations::Documents::Show).to receive(:call).with({
+          id: document.id,
+          authorization: authorization_information
+        }).and_return(find_failure)
+        get :show, params: { id: document.id}
       end
 
-      it "should return failure message" do
-        parsed_response = JSON.parse(response.body)
-        expect(parsed_response.keys.include? 'message').to eq true
-      end
-
-      it "should return empty hash as document" do
-        parsed_response = JSON.parse(response.body)
-        expect(parsed_response['document']).to eq Hash.new
+      it "is not found" do
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

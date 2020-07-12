@@ -9,5 +9,4 @@ RSpec.describe Document, :type => :model do
   it { should validate_presence_of(:source) }
   it { should validate_presence_of(:language) }
   it { should validate_presence_of(:document_type) }
-  it { should validate_presence_of(:file_data) }
 end

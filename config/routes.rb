@@ -9,7 +9,6 @@ Rails.application.routes.draw do
         end
 
         member do
-          get :find
           get :download
         end
       end

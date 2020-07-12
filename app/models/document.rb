@@ -58,7 +58,9 @@ class Document
 
   field :document_type, type: String
 
-  validates_presence_of :title, :creator, :publisher, :type, :format, :source, :language, :document_type, :file_data
+  validates_presence_of :title, :creator, :publisher, :type, :format, :source, :language, :document_type
+
+  index({"subjects.subject_type" => 1, "subjects.subject_id" => 1}, {name: :document_subject_search_index})
   
   def path=(input)
     self.file = File.open(input) if File.exists? input
