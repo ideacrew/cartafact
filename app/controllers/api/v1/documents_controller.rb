@@ -1,18 +1,4 @@
 class Api::V1::DocumentsController < ApplicationController
-  def upload
-    authorization_information = verify_authorization_headers_present
-    unless authorization_information
-      return nil
-    end
-    result = ::Cartafact::Entities::Operations::Documents::Upload.new.call(params_hash)
-
-    if result.success?
-      render :json => {status: "success", reference_id: result.value![:reference_id]}
-    else
-      render :json => {status: "failure", errors: result.failure[:message]}
-    end
-  end
-
   # query for documents. Returns an array.
   def index
     authorization_information = verify_authorization_headers_present
@@ -49,7 +35,7 @@ class Api::V1::DocumentsController < ApplicationController
     unless authorization_information
       return nil
     end
-    result = ::Cartafact::Entities::Operations::Documents::Create.call(params_hash)
+    result = ::Cartafact::Entities::Operations::Documents::Create.call(create_params)
     if result.success?
       render :json => result.value!, status: :created
     else
@@ -57,10 +43,29 @@ class Api::V1::DocumentsController < ApplicationController
     end
   end
 
+  def download
+    authorization_information = verify_authorization_headers_present
+    unless authorization_information
+      return nil
+    end
+    result = ::Cartafact::Entities::Operations::Documents::Download.call({
+      authorization: authorization_information,
+      id: params[:id]
+    })
+    if result.success?
+      document = result.value!
+      send_data document.file.to_io, type: document.download_mime_type, filename: document.file.original_filename
+    else
+      render :blank => true, status: 404
+    end
+  end
+
   private
 
-  def params_hash
-    params.permit!.to_h
+  def create_params
+    params.require(:document).permit!
+    params.permit(:content)
+    params[:document].to_h.merge({path: params[:content]})
   end
 
   def verify_authorization_headers_present

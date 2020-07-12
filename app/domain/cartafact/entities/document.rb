@@ -6,7 +6,7 @@ module Cartafact
       transform_keys(&:to_sym)
 
       attribute :subjects, ::Cartafact::Entities::Types::Coercible::Array.of(::Cartafact::Entities::Types::Hash)
-      attribute? :path, ::Cartafact::Entities::Types::Coercible::String
+      attribute? :path, ::Cartafact::Entities::Types::Any
       attribute? :document_type, ::Cartafact::Entities::Types::Coercible::String
       attribute? :id, ::Cartafact::Entities::Types::Coercible::String
       attribute? :title, ::Cartafact::Entities::Types::Coercible::String
@@ -15,7 +15,6 @@ module Cartafact
       attribute? :language, ::Cartafact::Entities::Types::Coercible::String
       attribute? :format, ::Cartafact::Entities::Types::Coercible::String
       attribute? :date, ::Cartafact::Entities::Types::Coercible::String
-      attribute? :content_type, ::Cartafact::Entities::Types::Coercible::String
     end
   end
 end

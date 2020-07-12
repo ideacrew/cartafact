@@ -1,7 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::DocumentsController, type: :controller do
-  let(:tempfile) { Tempfile.new('test.pdf') }
+  let(:tempfile) do
+    tf = Tempfile.new('test.pdf')
+    tf.write("DATA GOES HERE")
+    tf.rewind
+    tf
+  end
   let(:key) { Rails.application.credentials[:enroll_dc] }
   let(:authorization_information) do
     instance_double(
@@ -29,7 +34,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
             requesting_identity_signature_header: nil
           }
         ).and_return(authorization_successful)
-        post :create, params: {subjects: [{id: 'abc', type: 'consumer'}], path: tempfile.path, document_type: 'vlp_doc'}
+        post :create, params: { document: { subjects: [{id: 'abc', type: 'consumer'}], document_type: 'vlp_doc', format: "application/pdf" }, content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")}
       end
 
       it "should be success" do
@@ -40,10 +45,16 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(parsed_response['id']).not_to eq nil
       end
+
+      it "should create the file upload" do
+        parsed_response = JSON.parse(response.body)
+        document_id = parsed_response['id']
+        document = Document.find(BSON::ObjectId.from_string(document_id))
+        expect(document.file.read).to eq "DATA GOES HERE"
+      end
     end
 
     context "with invalid params" do
-
       before :each do
         allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
           {
@@ -51,7 +62,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
             requesting_identity_signature_header: nil
           }
         ).and_return(authorization_successful)
-        post :create, params: {}
+        post :create, params: {document: {document_type: ""}, content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")}
       end
 
       it "is invalid" do
@@ -68,7 +79,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
             requesting_identity_signature_header: nil
           }
         ).and_return(authorization_failed)
-        post :create, params: {subjects: [{id: 'abc', type: 'consumer'}], path: tempfile.path, document_type: 'vlp_doc'}
+        post :create, params: {document: { subjects: [{id: 'abc', type: 'consumer'}], document_type: 'vlp_doc'}}
       end
 
       it "should be unauthorized" do
@@ -105,10 +116,6 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
       it "should be success" do
         expect(response).to have_http_status(:success)
-      end
-
-      it "should return json" do
-        parsed_response = JSON.parse(response.body)
       end
 
       it "should return document metadata" do
@@ -200,46 +207,87 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     end
   end
 
-  # describe "#download" do
+  describe "#download" do
+    let(:document) do
+      FactoryBot.create(
+        :document,
+        file: tempfile
+      )
+    end
 
-  #   context "succesful" do
+    context "succesful with valid params" do
 
-  #     before :each do
-  #       get :download, params: {bucket: "sbc-bucket", key: "1234"}
-  #     end
+      let(:download_success) do
+        double(
+          success?: true,
+          value!: document
+        )
+      end
 
-  #     it "should be success" do
-  #       expect(response).to have_http_status(:success)
-  #     end
+      before :each do
+        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+          {
+            requesting_identity_header: nil,
+            requesting_identity_signature_header: nil
+          }
+        ).and_return(authorization_successful)
+        get :download, params: {id: document.id}
+      end
 
-  #     it "should return json" do
-  #       expect(response.content_type).to match "application/json"
-  #     end
+      it "is successful" do
+        expect(response.status).to eq 200
+      end
 
-  #     it "should return success status" do
-  #       result = JSON.parse(response.body)
-  #       expect(result['status']).to eq "success"
-  #     end
-  #   end
+      it "presents the file" do
+        content_disposition = response.headers["Content-Disposition"]
+        content_pairs = content_disposition.split("; ").select { |h| h.include?("=") }.map do |h|
+          h.split("=")
+        end
+        content_hash = Hash[content_pairs]
+        expect(content_hash["filename"]).to eq("\"" + document.file.original_filename + "\"")
+      end
 
-  #   context "failure" do
+      it "has the original file data" do
+        expect(response.stream.read).to eq "DATA GOES HERE"
+      end
+    end
 
-  #     before :each do
-  #       get :download, params: {bucket: "", key: ""}
-  #     end
+    context "when unauthorized" do
 
-  #     it "should be success" do
-  #       expect(response).to have_http_status(:success)
-  #     end
+      before :each do
+        get :download, params: { id: document.id}
+      end
 
-  #     it "should return json" do
-  #       expect(response.content_type).to match "application/json"
-  #     end
+      it "is forbidden" do
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
 
-  #     it "should return failure status" do
-  #       result = JSON.parse(response.body)
-  #       expect(result['status']).to eq "failure"
-  #     end
-  #   end
-  # end
+    context "when not found" do
+
+      let(:download_failure) do
+        double(
+          success?: false
+        )
+      end
+
+      before :each do
+        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+          {
+            requesting_identity_header: nil,
+            requesting_identity_signature_header: nil
+          }
+        ).and_return(authorization_successful)
+        allow(::Cartafact::Entities::Operations::Documents::Download).to receive(:call).with({
+          id: document.id,
+          authorization: authorization_information
+        }).and_return(download_failure)
+        get :download, params: { id: document.id}
+      end
+
+      it "is not found" do
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
 end

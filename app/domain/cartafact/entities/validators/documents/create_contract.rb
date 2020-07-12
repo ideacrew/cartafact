@@ -10,13 +10,13 @@ module Cartafact
             end
 
             required(:document_type).value(:string)
+            required(:path).value(:any)
             optional(:title).value(:string)
             optional(:identifier).value(:string)
             optional(:description).value(:string)
             optional(:language).value(:string)
             optional(:format).value(:string)
             optional(:date).value(:string)
-            optional(:content_type).value(:string)
           end
         end
       end
