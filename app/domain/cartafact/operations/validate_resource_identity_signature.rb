@@ -45,7 +45,7 @@ module Cartafact
         validator = Cartafact::Validators::RequestingIdentityContract.new
         validation_result = validator.call(parsed_json)
         unless validation_result.success?
-          return Failure(:no_system_specified)
+          return Failure(:no_system_or_user_specified)
         end
         Success(Cartafact::Entities::RequestingIdentity.new(validation_result.values))
       end

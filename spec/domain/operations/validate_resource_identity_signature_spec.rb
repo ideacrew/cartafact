@@ -59,7 +59,7 @@ module Cartafact
 
         it "fails" do
           expect(subject).not_to be_success
-          expect(subject.failure).to eq :no_system_specified
+          expect(subject.failure).to eq :no_system_or_user_specified
         end
       end
 
@@ -73,7 +73,7 @@ module Cartafact
 
         it "fails" do
           expect(subject).not_to be_success
-          expect(subject.failure).to eq :no_system_specified
+          expect(subject.failure).to eq :no_system_or_user_specified
         end
       end
 
@@ -81,7 +81,8 @@ module Cartafact
         let(:identity_data) do
           {
             authorized_identity: {
-              system: "BOGUS"
+              system: "BOGUS",
+              user_id: "some_id"
             }
           }
         end
@@ -103,7 +104,8 @@ module Cartafact
         let(:identity_data) do
           {
             authorized_identity: {
-              system: "a_valid_system"
+              system: "a_valid_system",
+              user_id: "some_id"
             }
           }
         end
@@ -138,7 +140,8 @@ module Cartafact
         let(:identity_data) do
           {
             "authorized_identity" => {
-              "system" => "a_valid_system"
+              "system" => "a_valid_system",
+              "user_id" => "some_id"
             }
           }
         end

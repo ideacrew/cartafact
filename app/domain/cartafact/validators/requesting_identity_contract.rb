@@ -9,7 +9,7 @@ module Cartafact
         end
 
         required(:authorized_identity).hash do
-          optional(:user_id).value(:string)
+          required(:user_id).value(:string)
           required(:system).value(:string)
         end
       end

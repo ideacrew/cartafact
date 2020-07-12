@@ -4,6 +4,7 @@ module Cartafact
       transform_keys(&:to_sym)
 
       attribute :system, Cartafact::Entities::Types::Coercible::String
+      attribute :user_id, Cartafact::Entities::Types::Coercible::String
     end
   end
 end

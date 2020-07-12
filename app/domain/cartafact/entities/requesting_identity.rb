@@ -3,7 +3,7 @@ module Cartafact
     class RequestingIdentity < Dry::Struct
       transform_keys(&:to_sym)
 
-      attribute? :authorized_subjects, Cartafact::Entities::Types::Coercible::Array
+      attribute? :authorized_subjects, Cartafact::Entities::Types::Coercible::Array.of(Cartafact::Entities::AuthorizedSubject)
       attribute :authorized_identity, AuthorizedIdentity
     end
   end
