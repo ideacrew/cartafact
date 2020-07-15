@@ -2,7 +2,7 @@ class DocumentSerializer
   include FastJsonapi::ObjectSerializer
   attributes :title, :creator, :identifier, :description, :language, :format, :source, :date, :creator
 
-  attribute :type, &:document_type
+  attribute :document_type, &:document_type
   attribute :subjects do |object|
     object.subjects.map do |subj|
       {
