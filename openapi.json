@@ -137,7 +137,7 @@
         {
           "in": "header",
           "name": "X-RequestingIdentity",
-          "description": "This is the requesting identity JSON, Base64 encoded.",
+          "description": "This is the requesting identity JSON, strictly (no endlines) Base64 encoded.",
           "required": true,
           "content": {
             "application/json": {
@@ -155,7 +155,7 @@
         {
           "in": "header",
           "name": "X-RequestingIdentitySignature",
-          "description": "Signature of the requesting identity information.  To calculate this, take the X-RequestingIdentity header, HMAC-SHA256 it using the secret corresponding to your application, and then Base64 encode the result.",
+          "description": "Signature of the requesting identity information.  To calculate this, take the X-RequestingIdentity header, HMAC-SHA256 it using the secret corresponding to your application, and then strictly (no endlines) Base64 encode the result.",
           "required": true,
           "schema": {
             "type": "string",

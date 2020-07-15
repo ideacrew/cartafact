@@ -38,7 +38,7 @@ module Cartafact
       describe "given invalid json :requesting_identity_header" do
         let(:params) do
           {
-            requesting_identity_header: Base64.encode64("{ adsfk"),
+            requesting_identity_header: Base64.strict_encode64("{ adsfk"),
             requesting_identity_signature_header: "SOMETHING"
           }
         end
@@ -52,7 +52,7 @@ module Cartafact
       describe "given identity information with no data" do
         let(:params) do
           {
-            requesting_identity_header: Base64.encode64("{}"),
+            requesting_identity_header: Base64.strict_encode64("{}"),
             requesting_identity_signature_header: "SOMETHING"
           }
         end
@@ -66,7 +66,7 @@ module Cartafact
       describe "given identity information with no data" do
         let(:params) do
           {
-            requesting_identity_header: Base64.encode64("{}"),
+            requesting_identity_header: Base64.strict_encode64("{}"),
             requesting_identity_signature_header: "SOMETHING"
           }
         end
@@ -89,7 +89,7 @@ module Cartafact
 
         let(:params) do
           {
-            requesting_identity_header: Base64.encode64(JSON.dump(identity_data)),
+            requesting_identity_header: Base64.strict_encode64(JSON.dump(identity_data)),
             requesting_identity_signature_header: "SOMETHING"
           }
         end
@@ -110,7 +110,7 @@ module Cartafact
           }
         end
 
-        let(:identity_header) { Base64.encode64(JSON.dump(identity_data)) }
+        let(:identity_header) { Base64.strict_encode64(JSON.dump(identity_data)) }
 
         let(:params) do
           {
@@ -139,14 +139,24 @@ module Cartafact
       describe "given identity information with a valid system and signature returns the identity data" do
         let(:identity_data) do
           {
-            "authorized_identity" => {
-              "system" => "a_valid_system",
-              "user_id" => "some_id"
-            }
+            :authorized_identity => {
+              :system => "a_valid_system",
+              :user_id => "some_id"
+            },
+            :authorized_subjects => [
+              {
+                "id" => "12345",
+                "type" => "Person"
+              }
+            ]
           }
         end
 
-        let(:identity_header) { Base64.encode64(JSON.dump(identity_data)) }
+        let(:expected_value) do 
+          Cartafact::Entities::RequestingIdentity.new(identity_data)
+        end
+
+        let(:identity_header) { Base64.strict_encode64(JSON.dump(identity_data)) }
 
         let(:params) do
           {
@@ -168,7 +178,7 @@ module Cartafact
 
         it "passes and returns the identity data" do
           expect(subject).to be_success
-          expect(subject.value!).to eq identity_data
+          expect(subject.value!).to eq expected_value
         end
       end
     end

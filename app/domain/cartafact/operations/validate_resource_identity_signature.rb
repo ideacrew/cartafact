@@ -25,8 +25,8 @@ module Cartafact
         identity_data = yield parse_data_json(decoded_resource_identity.value!)
         requested_identity = yield validate_requested_identity_params(identity_data.value!)
         jwt_app_keys = yield find_jwt_app_keys(requested_identity)
-        valid_key_found = yield check_signatures(jwt_app_keys, decoded_resource_identity.value!, decoded_resource_identity_signature.value!)
-        Success(identity_data.value!)
+        valid_key_found = yield check_signatures(jwt_app_keys, r_identity_b64, decoded_resource_identity_signature.value!)
+        Success(requested_identity)
       end
 
       def decode_values(data, failure_value)
