@@ -63,9 +63,9 @@ class Api::V1::DocumentsController < ApplicationController
   private
 
   def create_params
-    params.require(:document).permit!
+    params.require(:document)
     params.permit(:content)
-    params[:document].to_h.merge({path: params[:content]})
+    JSON.parse(params[:document]).to_h.merge({path: params[:content]})
   end
 
   def verify_authorization_headers_present
