@@ -60,12 +60,45 @@ class Api::V1::DocumentsController < ApplicationController
     end
   end
 
+  def update
+    authorization_information = verify_authorization_headers_present
+    unless authorization_information
+      return nil
+    end
+    result = ::Cartafact::Entities::Operations::Documents::Update.call(update_params)
+    if result.success?
+      render :json => result.value!, status: :updated
+    else
+      render :json => result.failure, status: "422"
+    end
+  end
+
+  def destroy
+    authorization_information = verify_authorization_headers_present
+    unless authorization_information
+      return nil
+    end
+    result = ::Cartafact::Entities::Operations::Documents::Destroy.call(update_params)
+    if result.success?
+      render :json => result.value!, status: :destroyed
+    else
+      render :json => result.failure, status: "422"
+    end
+  end
+
+  def update_meta_data
+  end
+
   private
 
   def create_params
     params.require(:document)
     params.permit(:content)
     JSON.parse(params[:document]).to_h.merge({path: params[:content]})
+  end
+
+  def update_params
+    params.require(:document).permit(:path, :id)
   end
 
   def verify_authorization_headers_present
