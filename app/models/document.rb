@@ -41,6 +41,23 @@ class Document
   # Conforms to ISO 639
   field :language, type: String, default: "en"
 
+  # Date of submission of the resource.
+  # @return [DateTime]
+  field :date_submitted, type: DateTime
+
+  # Date of creation of the resource.
+  # @return [DateTime]
+  attribute :created, type: DateTime
+
+  # Date of acceptance of the resource. 
+  # @return [DateTime]
+  attribute :date_accepted, type: DateTime
+
+  # Recommended practice is to describe the date, date/time, or period of time as recommended 
+  # for the property Date, of which this is a subproperty.
+  # @return [DateTime]
+  attribute :valid, type: DateTime
+
   # A related resource - a string conforming to a formal identification system
   field :relation, type: String
 
@@ -51,6 +68,18 @@ class Document
   field :rights, type: String
 
   field :tags, type: Array, default: []
+
+  # Information about who may access the resource or an indication of its security status. 
+  # Access Rights may include information regarding access or restrictions based on privacy, 
+  # security, or other policies.
+  # @return [Array<String>]
+  attribute :access_rights, type: Array
+
+
+  # The size or duration of the resource.
+  # Recommended practice is to specify the file size in megabytes and duration in ISO 8601 format.
+  # @return [Mixed]
+  attribute :extent, type: Array
 
   # field :size, type: String
 
