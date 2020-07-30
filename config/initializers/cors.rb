@@ -7,7 +7,7 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins 'localhost:4201'
+    origins 'hotfix-2-enroll.priv.dchbx.org'
 
     resource '*',
       headers: :any,
