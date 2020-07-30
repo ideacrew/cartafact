@@ -1,0 +1,71 @@
+version: '3.4'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./.docker/production/Dockerfile
+      args:
+        RUBY_VERSION: '2.6.3'
+        BUNDLER_VERSION: '2.0.2'
+    image: ideacrew/cartafact_app:${IMAGE_TAG:-test_prod}
+    tmpfs:
+      - /tmp
+    secrets:
+      - master_key
+      - credentials
+    command: bash -c "rm -f tmp/pids/server.pid && \
+                      mkdir -p tmp/pids && \
+                      cat /run/secrets/master_key > /cartafact/config/master.key && \
+                      cat /run/secrets/credentials > /cartafact/config/credentials.yml.enc && \
+                      bundle exec puma -C config/puma.rb"
+    ports:
+      - '3000'
+    depends_on:
+      - db
+    environment:
+      - region=${region}
+      - access_key_id=${access_key_id}
+      - secret_access_key=${secret_access_key}
+      - bucket=${bucket}
+
+  web:
+    build:
+      context: .
+      dockerfile: ./.docker/production/Dockerfile
+    image: ideacrew/cartafact_web:${IMAGE_TAG:-test_prod}
+    tmpfs:
+      - /tmp
+    secrets:
+      - ssl_cert
+      - ssl_key
+    command: sh -c 'cat /run/secrets/ssl_cert > /etc/ssl/ssl_cert.pem &&
+                    cat /run/secrets/ssl_key > /etc/ssl/ssl_key.pem &&
+                    sleep 10 &&
+                    nginx -g "daemon off;"'
+    ports:
+      - 80:80
+      - 443:443
+
+  db:
+    image: mongo:4.2
+    volumes:
+      - mongodb:/data/db
+      - mongodb_config:/data/configdb
+    ports:
+      - 27017
+
+volumes:
+  mongodb:
+  mongodb_config:
+
+
+secrets:
+  ssl_cert:
+    file: ../certs/dchbx_star.crt
+  ssl_key:
+    file: ../certs/dchbx_star.pem
+  master_key:
+    file: ../cartafact_config/master.key
+  credentials:
+    file: ../cartafact_config/credentials.yml.enc
