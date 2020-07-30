@@ -56,7 +56,7 @@ class Document
   # Recommended practice is to describe the date, date/time, or period of time as recommended 
   # for the property Date, of which this is a subproperty.
   # @return [DateTime]
-  field :valid, type: DateTime
+  # field :valid, type: DateTime
 
   # A related resource - a string conforming to a formal identification system
   field :relation, type: String
