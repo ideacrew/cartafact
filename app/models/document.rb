@@ -92,6 +92,7 @@ class Document
   index({"subjects.subject_type" => 1, "subjects.subject_id" => 1}, {name: :document_subject_search_index})
   
   def path=(input)
+    input.original_filename = SecureRandom.uuid
     self.file = input
   end
 
