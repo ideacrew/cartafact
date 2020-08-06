@@ -2,9 +2,7 @@
 
 This is a micro service that you can use to store/retreive/search documents.
 
-## Store a new document:
-
-POST /api​/v1​/documents
+## Headers
 
 ###### Parameters:
 
@@ -34,7 +32,6 @@ Signature of the requesting identity information. To calculate this, take the X-
 **Payload
 
 ```
-
 payload = {
   authorized_identity: {
     user_id: "string",
@@ -52,7 +49,14 @@ headers: {
   'HTTP-X-REQUESTINGIDENTITY' => encoded_identity,
   'HTTP-X-REQUESTINGIDENTITYSIGNATURE' => Base64.strict_encode64(OpenSSL::HMAC.digest("SHA256", your application secret key, encoded_identity))
 }
+```
 
+## Store a new document:
+
+POST /api​/v1​/documents
+
+
+```
 body: {
   document: {
     subjects: [{
@@ -86,5 +90,13 @@ body: {
 }
 ```
 
+## Download document:
 
+GET /api​/v1​/documents/:id/download
 
+###### Parameters:
+
+```
+id: string # Required.
+
+```
