@@ -34,7 +34,18 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
             requesting_identity_signature_header: nil
           }
         ).and_return(authorization_successful)
-        post :create, params: { document: JSON.dump({ subjects: [{id: 'abc', type: 'consumer'}], document_type: 'vlp_doc', format: "application/pdf" }), content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")}
+        post :create, params: { 
+          document: JSON.dump({ subjects: [{id: 'abc', type: 'consumer'}],
+          document_type: 'vlp_doc',
+          format: "application/pdf",
+          creator: 'dc',
+          publisher: 'dc',
+          type: 'text',
+          format: 'application/octet-stream',
+          source: 'enroll_system',
+          language: 'en',
+          date_submitted: Date.today }), content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
+        }
       end
 
       it "should be success" do
