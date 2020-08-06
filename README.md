@@ -1,24 +1,90 @@
-# README
+# What Cartafact is -
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a micro service that you can use to store/retreive/search documents.
 
-Things you may want to cover:
+## Store a new document:
 
-* Ruby version
+POST /api​/v1​/documents
 
-* System dependencies
+###### Parameters:
 
-* Configuration
+**X-RequestingIdentity -
 
-* Database creation
+This is the requesting identity JSON, Base64 encoded.
 
-* Database initialization
+**JSON structure -
 
-* How to run the test suite
+```
+  {
+    authorized_identity: {
+      user_id: "string",
+      system: "string"
+    },
+    authorized_subjects: [{
+      type: "string",
+      id: "string"
+    }]
+  }
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+**X-RequestingIdentitySignature -
 
-* Deployment instructions
+Signature of the requesting identity information. To calculate this, take the X-RequestingIdentity header, HMAC-SHA256 it using the secret corresponding to your application, and then Base64 encode the result.
 
-* ...
+**Payload
+
+```
+
+payload = {
+  authorized_identity: {
+    user_id: "string",
+    system: "string"
+  },
+  authorized_subjects: [{
+    type: "string",
+    id: "string"
+  }]
+}
+
+encoded_identity = Base64.strict_encode64(payload.to_json)
+
+headers: {
+  'HTTP-X-REQUESTINGIDENTITY' => encoded_identity,
+  'HTTP-X-REQUESTINGIDENTITYSIGNATURE' => Base64.strict_encode64(OpenSSL::HMAC.digest("SHA256", your application secret key, encoded_identity))
+}
+
+body: {
+  document: {
+    subjects: [{
+      id: string,
+      type: string
+    }],
+    document_type: string
+  }.to_json,
+  content: 'uploaded file content here', # Required.
+  creator: string,                       # Required.
+  publisher: string,                     # Required.
+  type: string,                          # Required.
+  format: string,                        # Required.
+  source: string,                        # Required.
+  language: string,                      # Required.
+  date_submitted: date,                  # Required.
+  title: string, # Optional.
+  identifier: string, # Optional.
+  description: string, # Optional.
+  contributor: string, # Optional.
+  created: date, # Optional.
+  date_accepted: date, # Optional.
+  expire: date, # Optional.
+  relation: string, # Optional.
+  coverage: string, # Optional.
+  tags: string, # Optional.
+  rights: string, # Optional.
+  access_rights: string, # Optional.
+  extent: string, # Optional.
+  file_data: string, # Optional.
+}
+```
+
+
+
