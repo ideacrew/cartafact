@@ -54,6 +54,7 @@ class Api::V1::DocumentsController < ApplicationController
     })
     if result.success?
       document = result.value!
+      response.headers["Last-Modified"] = document.updated_at.httpdate.to_s
       send_data document.file.to_io, type: document.download_mime_type, filename: document.file.original_filename
     else
       render :blank => true, status: 404
