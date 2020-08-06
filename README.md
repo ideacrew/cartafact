@@ -73,20 +73,20 @@ body: {
   source: string,                        # Required.
   language: string,                      # Required.
   date_submitted: date,                  # Required.
-  title: string, # Optional.
-  identifier: string, # Optional.
-  description: string, # Optional.
-  contributor: string, # Optional.
-  created: date, # Optional.
-  date_accepted: date, # Optional.
-  expire: date, # Optional.
-  relation: string, # Optional.
-  coverage: string, # Optional.
-  tags: string, # Optional.
-  rights: string, # Optional.
-  access_rights: string, # Optional.
-  extent: string, # Optional.
-  file_data: string, # Optional.
+  title: string,                         # Optional.
+  identifier: string,                    # Optional.
+  description: string,                   # Optional.
+  contributor: string,                   # Optional.
+  created: date,                         # Optional.
+  date_accepted: date,                   # Optional.
+  expire: date,                          # Optional.
+  relation: string,                      # Optional.
+  coverage: string,                      # Optional.
+  tags: string,                          # Optional.
+  rights: string,                        # Optional.
+  access_rights: string,                 # Optional.
+  extent: string,                        # Optional.
+  file_data: string,                     # Optional.
 }
 ```
 
