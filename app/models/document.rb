@@ -56,7 +56,7 @@ class Document
   # Recommended practice is to describe the date, date/time, or period of time as recommended 
   # for the property Date, of which this is a subproperty.
   # @return [DateTime]
-  # field :valid, type: DateTime
+  field :expire, type: DateTime
 
   # A related resource - a string conforming to a formal identification system
   field :relation, type: String
@@ -92,6 +92,7 @@ class Document
   index({"subjects.subject_type" => 1, "subjects.subject_id" => 1}, {name: :document_subject_search_index})
   
   def path=(input)
+    input.original_filename = SecureRandom.uuid
     self.file = input
   end
 
