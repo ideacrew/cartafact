@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Api::V1::DocumentsController, type: :controller do
@@ -22,28 +24,24 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
   let(:authorization_failed) do
     double(success?: false)
   end
-  
+
   describe "#create" do
-
     context "succesful with valid params" do
-
       before :each do
         allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
-          {
-            requesting_identity_header: nil,
-            requesting_identity_signature_header: nil
-          }
+          requesting_identity_header: nil,
+          requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        post :create, params: { 
-          document: JSON.dump({ subjects: [{id: 'abc', type: 'consumer'}],
-          document_type: 'vlp_doc',
-          format: "application/pdf",
-          creator: 'dc',
-          publisher: 'dc',
-          type: 'text',
-          source: 'enroll_system',
-          language: 'en',
-          date_submitted: Date.today }), content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
+        post :create, params: {
+          document: JSON.dump(subjects: [{ id: 'abc', type: 'consumer' }],
+                              document_type: 'vlp_doc',
+                              format: "application/pdf",
+                              creator: 'dc',
+                              publisher: 'dc',
+                              type: 'text',
+                              source: 'enroll_system',
+                              language: 'en',
+                              date_submitted: Date.today), content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
         }
       end
 
@@ -67,12 +65,10 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     context "with invalid params" do
       before :each do
         allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
-          {
-            requesting_identity_header: nil,
-            requesting_identity_signature_header: nil
-          }
+          requesting_identity_header: nil,
+          requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        post :create, params: {document: JSON.dump({document_type: ""}), content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")}
+        post :create, params: { document: JSON.dump(document_type: ""), content: Rack::Test::UploadedFile.new(tempfile, "application/pdf") }
       end
 
       it "is invalid" do
@@ -81,15 +77,12 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     end
 
     context "when unauthorized" do
-
       before :each do
         allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
-          {
-            requesting_identity_header: nil,
-            requesting_identity_signature_header: nil
-          }
+          requesting_identity_header: nil,
+          requesting_identity_signature_header: nil
         ).and_return(authorization_failed)
-        post :create, params: {document: { subjects: [{id: 'abc', type: 'consumer'}], document_type: 'vlp_doc'}}
+        post :create, params: { document: { subjects: [{ id: 'abc', type: 'consumer' }], document_type: 'vlp_doc' } }
       end
 
       it "should be unauthorized" do
@@ -99,7 +92,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
   end
 
   describe "#show" do
-    let(:document) {FactoryBot.create(:document)}
+    let(:document) { FactoryBot.create(:document) }
     context "succesful with valid params" do
       let(:document_json) { {} }
 
@@ -112,16 +105,14 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
       before :each do
         allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
-          {
-            requesting_identity_header: nil,
-            requesting_identity_signature_header: nil
-          }
+          requesting_identity_header: nil,
+          requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        allow(::Cartafact::Entities::Operations::Documents::Show).to receive(:call).with({
+        allow(::Cartafact::Entities::Operations::Documents::Show).to receive(:call).with(
           id: document.id,
           authorization: authorization_information
-        }).and_return(find_success)
-        get :show, params: {id: document.id}
+        ).and_return(find_success)
+        get :show, params: { id: document.id }
       end
 
       it "should be success" do
@@ -135,9 +126,8 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     end
 
     context "when unauthorized" do
-
       before :each do
-        get :show, params: { id: document.id}
+        get :show, params: { id: document.id }
       end
 
       it "is forbidden" do
@@ -146,7 +136,6 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     end
 
     context "when not found" do
-
       let(:find_failure) do
         double(
           success?: false
@@ -155,16 +144,14 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
       before :each do
         allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
-          {
-            requesting_identity_header: nil,
-            requesting_identity_signature_header: nil
-          }
+          requesting_identity_header: nil,
+          requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        allow(::Cartafact::Entities::Operations::Documents::Show).to receive(:call).with({
+        allow(::Cartafact::Entities::Operations::Documents::Show).to receive(:call).with(
           id: document.id,
           authorization: authorization_information
-        }).and_return(find_failure)
-        get :show, params: { id: document.id}
+        ).and_return(find_failure)
+        get :show, params: { id: document.id }
       end
 
       it "is not found" do
@@ -191,10 +178,9 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
       before :each do
         allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
-          {
-            requesting_identity_header: requesting_identity_header_value,
-            requesting_identity_signature_header: requesting_identity_signature_header_value
-          }).and_return(authorization_successful)
+          requesting_identity_header: requesting_identity_header_value,
+          requesting_identity_signature_header: requesting_identity_signature_header_value
+        ).and_return(authorization_successful)
         allow(::Cartafact::Entities::Operations::Documents::Where).to receive(:call).with(authorization_information).and_return(document_result)
         request.headers["X-RequestingIdentity"] = requesting_identity_header_value
         request.headers["X-RequestingIdentitySignature"] = requesting_identity_signature_header_value
@@ -214,11 +200,10 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     context "failure with invalid params" do
       before :each do
         allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
-          {
-            requesting_identity_header: nil,
-            requesting_identity_signature_header: nil
-          }).and_return(authorization_failed)
-          get :index
+          requesting_identity_header: nil,
+          requesting_identity_signature_header: nil
+        ).and_return(authorization_failed)
+        get :index
       end
 
       it "should be success" do
@@ -236,7 +221,6 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     end
 
     context "succesful with valid params" do
-
       let(:download_success) do
         double(
           success?: true,
@@ -246,12 +230,10 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
       before :each do
         allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
-          {
-            requesting_identity_header: nil,
-            requesting_identity_signature_header: nil
-          }
+          requesting_identity_header: nil,
+          requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        get :download, params: {id: document.id}
+        get :download, params: { id: document.id }
       end
 
       it "is successful" do
@@ -273,9 +255,8 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     end
 
     context "when unauthorized" do
-
       before :each do
-        get :download, params: { id: document.id}
+        get :download, params: { id: document.id }
       end
 
       it "is forbidden" do
@@ -284,7 +265,6 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     end
 
     context "when not found" do
-
       let(:download_failure) do
         double(
           success?: false
@@ -293,16 +273,14 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
       before :each do
         allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
-          {
-            requesting_identity_header: nil,
-            requesting_identity_signature_header: nil
-          }
+          requesting_identity_header: nil,
+          requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        allow(::Cartafact::Entities::Operations::Documents::Download).to receive(:call).with({
+        allow(::Cartafact::Entities::Operations::Documents::Download).to receive(:call).with(
           id: document.id,
           authorization: authorization_information
-        }).and_return(download_failure)
-        get :download, params: { id: document.id}
+        ).and_return(download_failure)
+        get :download, params: { id: document.id }
       end
 
       it "is not found" do

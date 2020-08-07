@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class Document
   include Mongoid::Document
   include Mongoid::Timestamps
   include Shrine::Attachment(:file)
 
-  ACCESS_RIGHTS = %w(public pii_restricted)
+  ACCESS_RIGHTS = %w[public pii_restricted].freeze
 
   # Dublin Core metadata elements
   field :title, type: String, default: "untitled"
@@ -49,11 +51,11 @@ class Document
   # @return [DateTime]
   field :created, type: DateTime
 
-  # Date of acceptance of the resource. 
+  # Date of acceptance of the resource.
   # @return [DateTime]
   field :date_accepted, type: DateTime
 
-  # Recommended practice is to describe the date, date/time, or period of time as recommended 
+  # Recommended practice is to describe the date, date/time, or period of time as recommended
   # for the property Date, of which this is a subproperty.
   # @return [DateTime]
   field :expire, type: DateTime
@@ -69,12 +71,11 @@ class Document
 
   field :tags, type: Array, default: []
 
-  # Information about who may access the resource or an indication of its security status. 
-  # Access Rights may include information regarding access or restrictions based on privacy, 
+  # Information about who may access the resource or an indication of its security status.
+  # Access Rights may include information regarding access or restrictions based on privacy,
   # security, or other policies.
   # @return [Array<String>]
   field :access_rights, type: Array
-
 
   # The size or duration of the resource.
   # Recommended practice is to specify the file size in megabytes and duration in ISO 8601 format.
@@ -89,18 +90,17 @@ class Document
 
   validates_presence_of :title, :creator, :publisher, :type, :format, :source, :language, :document_type
 
-  index({"subjects.subject_type" => 1, "subjects.subject_id" => 1}, {name: :document_subject_search_index})
-  
+  index({ "subjects.subject_type" => 1, "subjects.subject_id" => 1 }, name: :document_subject_search_index)
+
   def path=(input)
     input.original_filename = SecureRandom.uuid
     self.file = input
   end
 
   def download_mime_type
-    if file && !file.mime_type.blank?
-      return file.mime_type
-    end
+    return file.mime_type if file && !file.mime_type.blank?
     return format unless format.blank?
+
     "application/octet-stream"
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "dry/transaction/operation"
 
 module Cartafact
@@ -5,28 +7,27 @@ module Cartafact
     module Operations
       module Documents
         class Where
-
           include Dry::Transaction::Operation
 
           def self.call(input)
-            self.new.call(input)
+            new.call(input)
           end
 
           def call(input)
-              matching_criteria = search_params_from_entity(input.authorized_subjects)
-              return Failure(:no_subjects_specified) if matching_criteria.empty?
-              documents = ::Document.where("subjects" => 
-                { "$elemMatch" => 
-                { "$or" =>
-                matching_criteria } }
-              )
-              return Failure(:no_documents_found) if documents.empty?
-              
-              serialized_documents = documents.lazy.map do |doc|
-                ::DocumentSerializer.new(doc).serializable_hash[:data][:attributes]
-              end
+            matching_criteria = search_params_from_entity(input.authorized_subjects)
+            return Failure(:no_subjects_specified) if matching_criteria.empty?
 
-              Success(serialized_documents)
+            documents = ::Document.where("subjects" =>
+              { "$elemMatch" =>
+              { "$or" =>
+              matching_criteria } })
+            return Failure(:no_documents_found) if documents.empty?
+
+            serialized_documents = documents.lazy.map do |doc|
+              ::DocumentSerializer.new(doc).serializable_hash[:data][:attributes]
+            end
+
+            Success(serialized_documents)
           end
 
           def search_params_from_entity(authorized_subjects)

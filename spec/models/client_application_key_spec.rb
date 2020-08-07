@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe ClientApplicationKey do
@@ -32,5 +34,4 @@ describe ClientApplicationKey do
       expect(subject.valid_signature?(data, signature)).to be_truthy
     end
   end
-
 end

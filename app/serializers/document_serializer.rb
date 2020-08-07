@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DocumentSerializer
   include FastJsonapi::ObjectSerializer
   attributes :title, :creator, :identifier, :description, :language, :format, :source, :date, :creator
@@ -12,7 +14,7 @@ class DocumentSerializer
     end
   end
 
-  attribute :version do |object|
+  attribute :version do |_object|
     nil
   end
 
@@ -20,22 +22,16 @@ class DocumentSerializer
     object.id.to_s
   end
 
-=begin
-  attribute :url do |object|
-    url = Rails.env.production? ? object.file.url(response_content_disposition: 'attachment;') : ('/tmp' + object.file.url)
-    Base64.encode64(url)
-  end
-=end
+  #   attribute :url do |object|
+  #     url = Rails.env.production? ? object.file.url(response_content_disposition: 'attachment;') : ('/tmp' + object.file.url)
+  #     Base64.encode64(url)
+  #   end
 
   attribute :extension do |object|
-    if object.file
-      object.file.extension
-    end
+    object.file&.extension
   end
 
   attribute :size do |object|
-    if object.file
-      object.file.size
-    end
+    object.file&.size
   end
 end

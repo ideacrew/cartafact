@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Cartafact
   module Entities
     module Operations
@@ -6,20 +8,17 @@ module Cartafact
           include Dry::Monads[:result]
 
           def self.call(input)
-            self.new.call(input)
+            new.call(input)
           end
 
           def call(input)
             contract_result = Validators::Documents::CreateContract.new.call(input)
-            unless contract_result.success?
-              return Failure({errors: contract_result.errors.to_h})
-            end
-            
+            return Failure(errors: contract_result.errors.to_h) unless contract_result.success?
+
             entity = Cartafact::Entities::Document.new(contract_result.values.to_h)
             persist_result = Persist.new.call(entity)
-            unless persist_result.success?
-              return Failure({errors: persist_result.failures})
-            end
+            return Failure(errors: persist_result.failures) unless persist_result.success?
+
             Success(
               ::DocumentSerializer.new(persist_result.value!).serializable_hash[:data][:attributes]
             )

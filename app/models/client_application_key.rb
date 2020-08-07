@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ClientApplicationKey
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -11,10 +13,10 @@ class ClientApplicationKey
   validates_length_of :signing_key, allow_blank: false, min: 6, max: 256
 
   def self.locate_keys(application_name)
-     ClientApplicationKey.where(application_name: application_name)
+    ClientApplicationKey.where(application_name: application_name)
   end
 
   def valid_signature?(data, signature)
-    signature == OpenSSL::HMAC.digest("SHA256", self.signing_key, data)
+    signature == OpenSSL::HMAC.digest("SHA256", signing_key, data)
   end
 end

@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 module Cartafact
   module Entities
     module Operations
       module Documents
         class Render
-
           include Dry::Transaction::Operation
 
           def call(input)
@@ -18,7 +19,7 @@ module Cartafact
             #     Success({message: 'Successfully retrieved document', document: {}})
             #   else
             #     Failure({message: 'No Document found with given id', document: {}})
-            #   end 
+            #   end
             # else
             #   # pass doc meta data
             #   Success({message: 'Successfully retrieved document', documents: []})
