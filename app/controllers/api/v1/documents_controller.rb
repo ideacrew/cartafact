@@ -44,7 +44,7 @@ module Api
           render :json => result.failure, status: "422"
         end
       end
-      
+
       include ActionController::Live
       def download
         authorization_information = verify_authorization_headers_present
@@ -55,28 +55,37 @@ module Api
           id: params[:id]
         )
         if result.success?
-          begin
-            document = result.value!
-            disposition = ActionDispatch::Http::ContentDisposition.format(disposition: "attachment", filename: document.file.original_filename)
-            response.headers["Last-Modified"] = document.updated_at.httpdate.to_s
-            response.headers["Content-Disposition"] = disposition
-            response.headers['Content-Type'] = document.download_mime_type
-            response.headers["Cache-Control"] = "no-cache"
-            file = document.file
-            file.open do
-              while (data = file.read(4096))
-                response.stream.write data
-              end
-            end
-          ensure
-            response.stream.close
-          end
+          document = result.value!
+          stream_download(document)
         else
           render :blank => true, status: 404
         end
       end
 
       private
+
+      def stream_download(document)
+        disposition = ActionDispatch::Http::ContentDisposition.format(
+          disposition: "attachment",
+          filename: document.file.original_filename
+        )
+        set_headers_for_download_stream(document, disposition)
+        file = document.file
+        file.open do
+          while (data = file.read(4096))
+            response.stream.write data
+          end
+        end
+      ensure
+        response.stream.close
+      end
+
+      def set_headers_for_download_stream(document, disposition)
+        response.headers["Last-Modified"] = document.updated_at.httpdate.to_s
+        response.headers["Content-Disposition"] = disposition
+        response.headers['Content-Type'] = document.download_mime_type
+        response.headers["Cache-Control"] = "no-cache"
+      end
 
       def create_params
         params.require(:document)

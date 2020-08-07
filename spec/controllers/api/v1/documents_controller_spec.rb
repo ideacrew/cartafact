@@ -259,7 +259,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
       end
 
       it "has the original file data" do
-        expect(response.stream.read).to eq "DATA GOES HERE"
+        expect(response.stream.body).to eq "DATA GOES HERE"
       end
     end
 
