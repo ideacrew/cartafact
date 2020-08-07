@@ -16,7 +16,8 @@ class Document
   # Dublin Core Meta-Data for the subjects of this document
   embeds_many :subjects, class_name: "::DocumentSubject", inverse_of: :document
 
-  # May include but is not limited to: an abstract, a table of contents, a graphical representation, or a free-text account of the resource
+  # May include but is not limited to:
+  # an abstract, a table of contents, a graphical representation, or a free-text account of the resource
   field :description, type: String
 
   # Entity responsible for making the resource available - person, organization or service

@@ -7,12 +7,19 @@ Layout/LineLength:
 Bundler/OrderedGems:
   Enabled: false
 
+Metrics/AbcSize:
+  Max: 20
+
 Metrics/BlockLength:
   Exclude:
     - spec/**/*.rb
+    - app/domain/cartafact/entities/validators/documents/**/*.rb
 
 Metrics/MethodLength:
-  Max: 15
+  Max: 20
+
+Metrics/ModuleLength:
+  Max: 300
 
 Style/BlockComments:
   Exclude:
@@ -23,7 +30,10 @@ Style/BracesAroundHashParameters:
 
 Style/Documentation:
   Exclude:
+    - app/controllers/application_controller.rb
+    - app/mailers/application_mailer.rb
     - config/application.rb
+    - spec/**/*_spec.rb
 
 Style/EmptyLiteral:
   Enabled: false

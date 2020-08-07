@@ -28,8 +28,15 @@ class ApplicationController < ActionController::API
   end
 
   def jwt_secret_key
-    if params['authorized_identity'] && params['authorized_identity']['system']
-      Rails.application.credentials[params['authorized_identity']['system'].to_sym]
-    end
+    extract_credentials_from_application_settings(params) if authorized_identity_specified?(params)
+  end
+
+  def extract_credentials_from_application_settings(params_hash)
+    Rails.application.credentials[params_hash['authorized_identity']['system'].to_sym]
+  end
+
+  def authorized_identity_specified?(params_hash)
+    params_hash['authorized_identity'] &&
+      params_hash['authorized_identity']['system']
   end
 end

@@ -2,6 +2,7 @@
 
 module Cartafact
   module Entities
+    # Represents the types and type definitions used throughout cartafact.
     module Types
       send(:include, Dry.Types())
       include Dry::Logic
@@ -15,7 +16,8 @@ module Cartafact
         # intended to be useful for direct machine processing.
         :dataset,
         # An event is a non-persistent, time-based occurrence. Metadata for an
-        # event provides descriptive information that is the basis for discovery of the purpose, location, duration, responsible agents, and links to related events and resources.
+        # event provides descriptive information that is the basis for
+        # discovery of the purpose, location, duration, responsible agents, and links to related events and resources.
         # The resource of type event may not be retrievable if the described
         # instantiation has expired or is yet to occur.
         # Examples - exhibition, web-cast, conference, workshop, open-day,
@@ -27,8 +29,14 @@ module Cartafact
         # film, diagrams, maps, musical notation.
         # Note that image may include both electronic and physical representations.
         :image,
-        :interactive_resource,  # An interactive resource is a resource which requires interaction from the user to be understood, executed, or experienced. For example - forms on web pages, applets, multimedia learning objects, chat services, virtual reality.
-        :service,               # A service is a system that provides one or more functions of value to the end-user. Examples include: a photocopying service, a banking service, an authentication service, interlibrary loans, a Z39.50 or Web server.
+        # An interactive resource is a resource which requires interaction from the user
+        # to be understood, executed, or experienced.
+        # For example - forms on web pages, applets, multimedia learning objects, chat services, virtual reality.
+        :interactive_resource,
+        # A service is a system that provides one or more functions of value to the end-user.
+        # Examples include: a photocopying service, a banking service,
+        # an authentication service, interlibrary loans, a Z39.50 or Web server.
+        :service,
         # Software is a computer program in source or compiled form which may be available for installation
         # non-transiently on another machine.  For software which exists only to create an interactive environment,
         # use interactive instead.

@@ -19,11 +19,18 @@ module Cartafact
         return Failure(:no_resource_identity_signature_header) if r_identity_sig_b64.blank?
 
         decoded_resource_identity = yield decode_values(r_identity_b64, :invalid_base64_resource_identity_content)
-        decoded_resource_identity_signature = yield decode_values(r_identity_sig_b64, :invalid_base64_resource_identity_signature_content)
+        decoded_resource_identity_signature = yield decode_values(
+          r_identity_sig_b64,
+          :invalid_base64_resource_identity_signature_content
+        )
         identity_data = yield parse_data_json(decoded_resource_identity.value!)
         requested_identity = yield validate_requested_identity_params(identity_data.value!)
         jwt_app_keys = yield find_jwt_app_keys(requested_identity)
-        valid_key_found = yield check_signatures(jwt_app_keys, r_identity_b64, decoded_resource_identity_signature.value!)
+        _valid_key_found = yield check_signatures(
+          jwt_app_keys,
+          r_identity_b64,
+          decoded_resource_identity_signature.value!
+        )
         Success(requested_identity)
       end
 
@@ -34,7 +41,7 @@ module Cartafact
       end
 
       def parse_data_json(data)
-        res = Try do
+        Try do
           Success(JSON.parse(data))
         end.or(Failure(:invalid_resource_identity_json))
       end

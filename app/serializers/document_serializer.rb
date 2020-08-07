@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Serializes a represented document for JSON resource format.
 class DocumentSerializer
   include FastJsonapi::ObjectSerializer
   attributes :title, :creator, :identifier, :description, :language, :format, :source, :date, :creator
