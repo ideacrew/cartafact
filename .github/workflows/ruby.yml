@@ -1,0 +1,35 @@
+name: Tests
+on: push
+
+env:
+  SHA: ${{ github.sha }}
+  BRANCH: ${{ github.ref }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Launch MongoDB
+      uses: wbari/start-mongoDB@v0.2
+      with:
+        mongoDBVersion: 3.6
+    - name: Set up Ruby 2.6.3
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.3
+    - name: Cache Gems
+      uses: actions/cache@v1
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+    - name: Install Gems
+      run: |
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3
+    - name: Run RSpec
+      run: |
+        cp -f config/mongoid.gh_actions.yml config/mongoid.yml
+        bundle exec rspec
