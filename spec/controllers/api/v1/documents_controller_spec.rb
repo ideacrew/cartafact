@@ -33,16 +33,20 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
         post :create, params: {
-          document: JSON.dump(subjects: [{ id: 'abc', type: 'consumer' }],
-                              document_type: 'vlp_doc',
-                              format: "application/pdf",
-                              creator: 'dc',
-                              publisher: 'dc',
-                              type: 'text',
-                              source: 'enroll_system',
-                              language: 'en',
-                              date_submitted: Date.today),
-                              content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
+          document: JSON.dump(
+            {
+              subjects: [{ id: 'abc', type: 'consumer' }],
+              document_type: 'vlp_doc',
+              format: "application/pdf",
+              creator: 'dc',
+              publisher: 'dc',
+              type: 'text',
+              source: 'enroll_system',
+              language: 'en',
+              date_submitted: Date.today
+            }
+          ),
+          content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
         }
       end
 
@@ -184,7 +188,9 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
           requesting_identity_header: requesting_identity_header_value,
           requesting_identity_signature_header: requesting_identity_signature_header_value
         ).and_return(authorization_successful)
-        allow(::Cartafact::Entities::Operations::Documents::Where).to receive(:call).with(authorization_information).and_return(document_result)
+        allow(::Cartafact::Entities::Operations::Documents::Where).to receive(:call).with(
+          authorization_information
+        ).and_return(document_result)
         request.headers["X-RequestingIdentity"] = requesting_identity_header_value
         request.headers["X-RequestingIdentitySignature"] = requesting_identity_signature_header_value
         get :index

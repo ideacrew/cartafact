@@ -18,6 +18,13 @@ Style/BlockComments:
   Exclude:
     - spec/spec_helper.rb
 
+Style/BracesAroundHashParameters:
+  Enabled: false
+
+Style/Documentation:
+  Exclude:
+    - config/application.rb
+
 Style/EmptyLiteral:
   Enabled: false
 
