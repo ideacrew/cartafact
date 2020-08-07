@@ -24,6 +24,8 @@ services:
     depends_on:
       - db
     environment:
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-27017}
       - region=${region}
       - access_key_id=${access_key_id}
       - secret_access_key=${secret_access_key}
