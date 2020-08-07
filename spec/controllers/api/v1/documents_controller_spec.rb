@@ -41,7 +41,8 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
                               type: 'text',
                               source: 'enroll_system',
                               language: 'en',
-                              date_submitted: Date.today), content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
+                              date_submitted: Date.today),
+                              content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
         }
       end
 
@@ -68,7 +69,9 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        post :create, params: { document: JSON.dump(document_type: ""), content: Rack::Test::UploadedFile.new(tempfile, "application/pdf") }
+        post :create, params: {
+          document: JSON.dump(document_type: ""), content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
+        }
       end
 
       it "is invalid" do

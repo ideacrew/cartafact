@@ -8,7 +8,12 @@ RSpec.describe Cartafact::Entities::Validators::Documents::FindContract do
 
   context 'with valid params' do
     let(:attrs) do
-      { authorized_identity: { user_id: 'abc', system: 'enroll_dc' }, authorized_subjects: [{ id: 'abc', type: 'consumer' }], id: document.id.to_s }
+      {
+        authorized_identity: {
+          user_id: 'abc', system: 'enroll_dc'
+        },
+        authorized_subjects: [{ id: 'abc', type: 'consumer' }], id: document.id.to_s
+      }
     end
 
     it "should be success" do

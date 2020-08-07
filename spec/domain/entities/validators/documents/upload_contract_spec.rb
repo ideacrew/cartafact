@@ -8,7 +8,12 @@ RSpec.describe Cartafact::Entities::Validators::Documents::UploadContract do
 
   context 'with valid params' do
     let(:attrs) do
-      { authorized_identity: { user_id: 'abc', system: 'enroll_dc' }, authorized_subjects: [{ id: 'abc', type: 'consumer' }], path: tempfile.path, document_type: 'vlp_doc' }
+      {
+        authorized_identity: {
+          user_id: 'abc', system: 'enroll_dc'
+        },
+        authorized_subjects: [{ id: 'abc', type: 'consumer' }], path: tempfile.path, document_type: 'vlp_doc'
+      }
     end
 
     it "should be success" do
