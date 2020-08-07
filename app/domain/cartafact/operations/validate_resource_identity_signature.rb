@@ -4,6 +4,7 @@ require 'base64'
 
 module Cartafact
   module Operations
+    # Validate the signatures provided for all types of document request.
     class ValidateResourceIdentitySignature
       include Dry::Monads[:result, :do, :try, :maybe, :list]
 

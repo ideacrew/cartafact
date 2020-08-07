@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Represents a signing key used by a client application.
 class ClientApplicationKey
   include Mongoid::Document
   include Mongoid::Timestamps

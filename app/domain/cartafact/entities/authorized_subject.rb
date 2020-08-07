@@ -2,6 +2,7 @@
 
 module Cartafact
   module Entities
+    # An Entity representing the subject of a document.
     class AuthorizedSubject < Dry::Struct
       transform_keys(&:to_sym)
 

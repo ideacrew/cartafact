@@ -2,6 +2,9 @@
 
 module Cartafact
   module Entities
+    # Represents an identity making requests for a document.
+    #
+    # Includes authorized subjects and information about the system asserting the identity.
     class RequestingIdentity < Dry::Struct
       transform_keys(&:to_sym)
 

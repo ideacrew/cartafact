@@ -2,6 +2,7 @@
 
 module Cartafact
   module Entities
+    # An entity authorized to access document resources.
     class AuthorizedIdentity < Dry::Struct
       transform_keys(&:to_sym)
 

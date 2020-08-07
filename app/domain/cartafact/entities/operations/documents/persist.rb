@@ -4,6 +4,7 @@ module Cartafact
   module Entities
     module Operations
       module Documents
+        # Shared operation for create/update of document.
         class Persist
           include Dry::Transaction::Operation
 

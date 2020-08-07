@@ -4,6 +4,8 @@ module Cartafact
   module Entities
     module Validators
       module Documents
+        # Validates the provided parameters required to construct
+        # a document upload.
         class UploadContract < Dry::Validation::Contract
           params do
             required(:authorized_subjects).array(:hash) do

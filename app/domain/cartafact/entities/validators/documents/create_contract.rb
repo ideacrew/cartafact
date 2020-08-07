@@ -4,6 +4,8 @@ module Cartafact
   module Entities
     module Validators
       module Documents
+        # Validates the provided parameters required to perform
+        # document creation.
         class CreateContract < Dry::Validation::Contract
           params do
             required(:subjects).array(:hash) do

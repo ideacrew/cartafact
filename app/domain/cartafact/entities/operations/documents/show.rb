@@ -4,6 +4,7 @@ module Cartafact
   module Entities
     module Operations
       module Documents
+        # Find and serialize a known document resource
         class Show
           include Dry::Monads[:result]
 

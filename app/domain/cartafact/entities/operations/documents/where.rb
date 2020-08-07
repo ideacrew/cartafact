@@ -6,6 +6,7 @@ module Cartafact
   module Entities
     module Operations
       module Documents
+        # Given identity and search criteria, return a list of document resources.
         class Where
           include Dry::Transaction::Operation
 

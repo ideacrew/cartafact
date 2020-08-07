@@ -4,6 +4,8 @@ module Cartafact
   module Entities
     module Validators
       module Documents
+        # Validates the provided parameters required to find
+        # and authorize viewing a document resource.
         class FindContract < Dry::Validation::Contract
           params do
             required(:authorized_subjects).array(:hash) do

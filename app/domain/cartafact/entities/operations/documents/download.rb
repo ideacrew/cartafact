@@ -4,6 +4,7 @@ module Cartafact
   module Entities
     module Operations
       module Documents
+        # Download a document resource.
         class Download
           include Dry::Monads[:result]
 

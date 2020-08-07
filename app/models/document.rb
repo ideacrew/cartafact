@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Storage model for documents and their metadata.
 class Document
   include Mongoid::Document
   include Mongoid::Timestamps

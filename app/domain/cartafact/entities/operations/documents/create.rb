@@ -4,6 +4,7 @@ module Cartafact
   module Entities
     module Operations
       module Documents
+        # Create a new document resource.
         class Create
           include Dry::Monads[:result]
 
@@ -20,8 +21,12 @@ module Cartafact
             return Failure(errors: persist_result.failures) unless persist_result.success?
 
             Success(
-              ::DocumentSerializer.new(persist_result.value!).serializable_hash[:data][:attributes]
+              serialize_persist_result(persist_result)
             )
+          end
+
+          def serialize_persist_result(persist_result)
+            ::DocumentSerializer.new(persist_result.value!).serializable_hash[:data][:attributes]
           end
         end
       end

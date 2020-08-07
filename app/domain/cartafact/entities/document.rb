@@ -4,6 +4,7 @@ require 'dry-struct'
 
 module Cartafact
   module Entities
+    # Represents the document domain object.
     class Document < Dry::Struct
       transform_keys(&:to_sym)
 

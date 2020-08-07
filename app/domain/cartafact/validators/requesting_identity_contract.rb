@@ -2,6 +2,7 @@
 
 module Cartafact
   module Validators
+    # Validates the provided parameters required to construct a requesting identity.
     class RequestingIdentityContract < Dry::Validation::Contract
       params do
         optional(:authorized_subjects).array(:hash) do

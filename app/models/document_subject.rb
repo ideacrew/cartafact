@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Embedded model which stores an instance of a document subject.
 class DocumentSubject
   include Mongoid::Document
   include Mongoid::Timestamps
