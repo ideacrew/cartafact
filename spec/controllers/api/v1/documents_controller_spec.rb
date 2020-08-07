@@ -41,7 +41,6 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
           creator: 'dc',
           publisher: 'dc',
           type: 'text',
-          format: 'application/octet-stream',
           source: 'enroll_system',
           language: 'en',
           date_submitted: Date.today }), content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
@@ -182,13 +181,23 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
         double(success?: true, value!: document_list)
       end
 
+      let(:requesting_identity_header_value) do
+        "abcdefg"
+      end
+
+      let(:requesting_identity_signature_header_value) do
+        "abcdefgsigned"
+      end
+
       before :each do
         allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
           {
-            requesting_identity_header: nil,
-            requesting_identity_signature_header: nil
+            requesting_identity_header: requesting_identity_header_value,
+            requesting_identity_signature_header: requesting_identity_signature_header_value
           }).and_return(authorization_successful)
         allow(::Cartafact::Entities::Operations::Documents::Where).to receive(:call).with(authorization_information).and_return(document_result)
+        request.headers["X-RequestingIdentity"] = requesting_identity_header_value
+        request.headers["X-RequestingIdentitySignature"] = requesting_identity_signature_header_value
         get :index
       end
 

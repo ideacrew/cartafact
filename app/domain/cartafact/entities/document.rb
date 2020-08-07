@@ -6,13 +6,13 @@ module Cartafact
       transform_keys(&:to_sym)
 
       attribute :subjects, ::Cartafact::Entities::Types::Coercible::Array.of(::Cartafact::Entities::Types::Hash)
-      attribute :creator, ::Cartafact::Entities::Types::Coercible::String
-      attribute :publisher, ::Cartafact::Entities::Types::Coercible::String
+      attribute? :creator, ::Cartafact::Entities::Types::Coercible::String
+      attribute? :publisher, ::Cartafact::Entities::Types::Coercible::String
       attribute :type, ::Cartafact::Entities::Types::DcmiType
       attribute :format, ::Cartafact::Entities::Types::Coercible::String
-      attribute :source, ::Cartafact::Entities::Types::Coercible::String
-      attribute :language, ::Cartafact::Entities::Types::Coercible::String
-      attribute :date_submitted, ::Cartafact::Entities::Types::Nominal::Date
+      attribute? :source, ::Cartafact::Entities::Types::Coercible::String
+      attribute? :language, ::Cartafact::Entities::Types::Coercible::String
+      attribute? :date_submitted, ::Cartafact::Entities::Types::Nominal::Date
       attribute? :path, ::Cartafact::Entities::Types::Any
       attribute? :document_type, ::Cartafact::Entities::Types::Coercible::String
       attribute? :id, ::Cartafact::Entities::Types::Coercible::String

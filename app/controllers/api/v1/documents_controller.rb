@@ -72,8 +72,8 @@ class Api::V1::DocumentsController < ApplicationController
   def verify_authorization_headers_present
     # req_identity = "X-RequestingIdentity"
     # req_identity_signature = "X-RequestingIdentitySignature"
-    req_identity = request.headers["HTTP-X-REQUESTINGIDENTITY"]
-    req_identity_signature = request.headers["HTTP-X-REQUESTINGIDENTITYSIGNATURE"]
+    req_identity = request.headers["HTTP_X_REQUESTINGIDENTITY"]
+    req_identity_signature = request.headers["HTTP_X_REQUESTINGIDENTITYSIGNATURE"]
     validation = Cartafact::Operations::ValidateResourceIdentitySignature.call(
       {
         requesting_identity_header: req_identity,
