@@ -95,13 +95,12 @@ class Document
   index({ "subjects.subject_type" => 1, "subjects.subject_id" => 1 }, name: :document_subject_search_index)
 
   def path=(input)
-    input.original_filename = SecureRandom.uuid
     self.file = input
   end
 
   def download_mime_type
-    return file.mime_type if file && !file.mime_type.blank?
     return format unless format.blank?
+    return file.mime_type if file && !file.mime_type.blank?
 
     "application/octet-stream"
   end
