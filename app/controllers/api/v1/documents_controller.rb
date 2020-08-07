@@ -44,7 +44,8 @@ module Api
           render :json => result.failure, status: "422"
         end
       end
-
+      
+      include ActionController::Live
       def download
         authorization_information = verify_authorization_headers_present
         return nil unless authorization_information
@@ -54,9 +55,22 @@ module Api
           id: params[:id]
         )
         if result.success?
-          document = result.value!
-          response.headers["Last-Modified"] = document.updated_at.httpdate.to_s
-          send_data document.file.to_io, type: document.download_mime_type, filename: document.file.original_filename
+          begin
+            document = result.value!
+            disposition = ActionDispatch::Http::ContentDisposition.format(disposition: "attachment", filename: document.file.original_filename)
+            response.headers["Last-Modified"] = document.updated_at.httpdate.to_s
+            response.headers["Content-Disposition"] = disposition
+            response.headers['Content-Type'] = document.download_mime_type
+            response.headers["Cache-Control"] = "no-cache"
+            file = document.file
+            file.open do
+              while (data = file.read(4096))
+                response.stream.write data
+              end
+            end
+          ensure
+            response.stream.close
+          end
         else
           render :blank => true, status: 404
         end
