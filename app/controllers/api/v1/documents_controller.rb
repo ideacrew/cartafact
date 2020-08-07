@@ -4,6 +4,8 @@ module Api
   module V1
     # Controller exposing the document API.
     class DocumentsController < ApplicationController
+      FILE_STREAM_SIZE = 32768
+
       # query for documents. Returns an array.
       def index
         authorization_information = verify_authorization_headers_present
@@ -72,7 +74,7 @@ module Api
         set_headers_for_download_stream(document, disposition)
         file = document.file
         file.open do
-          while (data = file.read(4096))
+          while (data = file.read(FILE_STREAM_SIZE))
             response.stream.write data
           end
         end
