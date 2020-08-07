@@ -21,7 +21,7 @@ storage_options = if Rails.env.production?
                       cache: Shrine::Storage::FileSystem.new("/tmp", prefix: "uploads/cache"), # temporary
                       store: Shrine::Storage::FileSystem.new("/tmp", prefix: "uploads") # permanent
                     }
-end
+                  end
 
 Shrine.storages = storage_options
 Shrine.plugin :mongoid                # loads Mongoid integration

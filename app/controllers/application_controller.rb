@@ -11,10 +11,10 @@ class ApplicationController < ActionController::API
       begin
         token = headers['Authorization'].split(' ').last
         JWT.decode(token, jwt_secret_key)
-      rescue JWT::ExpiredSignature, JWT::VerificationError => e
+      rescue JWT::ExpiredSignature, JWT::VerificationError
         render json: { status: "failure", errors: ['Expired token'] }
         nil
-      rescue JWT::DecodeError, JWT::VerificationError => e
+      rescue JWT::DecodeError, JWT::VerificationError
         render json: { status: "failure", errors: ['Invalid token'] }
         nil
       rescue StandardError
