@@ -78,6 +78,10 @@ module Api
             response.stream.write data
           end
         end
+      # rubocop:disable Lint/RescueException
+      rescue Exception => e
+        Rails.logger.error { e }
+      # rubocop:enable Lint/RescueException
       ensure
         response.stream.close
       end
