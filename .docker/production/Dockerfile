@@ -2,7 +2,7 @@
 ###    app config    ###
 ########################
 
-FROM ruby:2.6.5 AS app
+FROM ruby:2.6.3 AS app
 
 ENV HOME /cartafact
 
