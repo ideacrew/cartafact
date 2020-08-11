@@ -91,6 +91,7 @@ module Api
         response.headers["Content-Disposition"] = disposition
         response.headers['Content-Type'] = document.download_mime_type
         response.headers["Cache-Control"] = "no-cache"
+        response.headers["X-Accel-Buffering"] = "no"
       end
 
       def create_params
