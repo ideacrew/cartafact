@@ -1,0 +1,407 @@
+{
+  "info": {
+    "title": "CartaStore",
+    "version": "0.1.0"
+  },
+  "components": {
+    "schemas": {
+      "DCSubject": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ]
+      },
+      "DCSubjectAuth": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "permission"
+        ]
+      },
+      "DCMeta": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "A name given to the resource.",
+            "type": "string"
+          },
+          "document_type": {
+            "description": "Document type.",
+            "type": "string"
+          },
+          "subjects": {
+            "type": "array",
+            "minLength": 1,
+            "items": {
+              "$ref": "#/components/schemas/DCSubject"
+            }
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "description": {
+            "description": "Description may include but is not limited to: an abstract, a table of contents, a graphical representation, or a free-text account of the resource.\n",
+            "type": "string"
+          },
+          "language": {
+            "type": "string",
+            "default": "en"
+          },
+          "format": {
+            "description": "MIME-type of the stored document.",
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "DocumentRecord": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DCMeta"
+          }
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "type",
+          "format",
+          "subject",
+          "id",
+          "version"
+        ]
+      },
+      "RequestingIdentity": {
+        "type": "object",
+        "properties": {
+          "authorized_identity": {
+            "type": "object",
+            "properties": {
+              "user_id": {
+                "type": "string"
+              },
+              "system": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "system"
+            ]
+          },
+          "authorized_subjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DCSubjectAuth"
+            }
+          }
+        },
+        "required": [
+          "authorized_identity",
+          "authorized_subjects"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/api/v1/documents": {
+      "parameters": [
+        {
+          "in": "header",
+          "name": "X-RequestingIdentity",
+          "description": "This is the requesting identity JSON, strictly (no endlines) Base64 encoded.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RequestingIdentity"
+                  }
+                ],
+                "format": "bytes"
+              }
+            }
+          }
+        },
+        {
+          "in": "header",
+          "name": "X-RequestingIdentitySignature",
+          "description": "Signature of the requesting identity information.  To calculate this, take the X-RequestingIdentity header, HMAC-SHA256 it using the secret corresponding to your application, and then strictly (no endlines) Base64 encode the result.",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "bytes"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Search documents.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "type",
+            "explode": false,
+            "style": "form",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The returned list of searched documents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentRecord"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Store"
+        ],
+        "summary": "Store a new document.",
+        "requestBody": {
+          "description": "The document to store.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "$ref": "#/components/schemas/DCMeta",
+                    "required": [
+                      "title",
+                      "type",
+                      "format",
+                      "subject"
+                    ]
+                  },
+                  "content": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "document",
+                  "content"
+                ]
+              },
+              "encoding": {
+                "document": {
+                  "contentType": "application/json"
+                },
+                "content": {
+                  "contentType": "application/octet-stream"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentRecord"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/documents/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        },
+        {
+          "in": "header",
+          "name": "X-RequestingIdentity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RequestingIdentity"
+                  }
+                ],
+                "format": "bytes"
+              }
+            }
+          }
+        },
+        {
+          "in": "header",
+          "name": "X-RequestingIdentitySignature",
+          "description": "Signature of the requesting identity information.",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "bytes"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Retrieve"
+        ],
+        "summary": "Get the metadata for a document.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "version",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentRecord"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/v1/documents/{id}/download": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        },
+        {
+          "in": "header",
+          "name": "X-RequestingIdentity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RequestingIdentity"
+                  }
+                ],
+                "format": "bytes"
+              }
+            }
+          }
+        },
+        {
+          "in": "header",
+          "name": "X-RequestingIdentitySignature",
+          "description": "Signature of the requesting identity information.",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "bytes"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Retrieve"
+        ],
+        "summary": "Get content of a document.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "version",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The document content",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "openapi": "3.0.0"
+}
