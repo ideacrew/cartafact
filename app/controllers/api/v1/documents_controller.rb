@@ -65,7 +65,7 @@ module Api
         unless authorization_information
           return nil
         end
-        result = ::Cartafact::Entities::Operations::Documents::Destroy.call(update_params)
+        result = ::Cartafact::Entities::Operations::Documents::Destroy.call({id: params[:id]})
         if result.success?
           render :json => result.value!, status: :destroyed
         else

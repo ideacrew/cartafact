@@ -15,7 +15,7 @@ module Cartafact
             ).first
             return Failure(:document_not_found) if document.empty?
 
-            if document.destory
+            if document.destroy!
               Success()
             else
               Failure({errors: document.errors.to_h})
