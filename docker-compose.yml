@@ -4,72 +4,38 @@ services:
   app: &app
     build:
       context: .
-      dockerfile: ./.dockerdev/Dockerfile
+      dockerfile: ./.docker/development/Dockerfile
       args:
         RUBY_VERSION: '2.6.3'
-        PG_MAJOR: '11'
         BUNDLER_VERSION: '2.0.2'
     image: cartafact-dev:0.1.0
-    tmpfs:
-      - /tmp
-
-  backend: &backend
-    <<: *app
-    stdin_open: true
-    tty: true
     volumes:
       - .:/app:cached
-      - rails_cache:/app/tmp/cache
+      - rails_cache:/cartafact/tmp/cache
       - bundle:/bundle
-      - .dockerdev/.psqlrc:/root/.psqlrc:ro
-    environment:
-      - RAILS_ENV=${RAILS_ENV:-development}
-      - REDIS_URL=redis://redis:6379/
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432
-      - BOOTSNAP_CACHE_DIR=/bundle/bootsnap
-      - WEB_CONCURRENCY=1
-      - HISTFILE=/app/log/.bash_history
-      - PSQL_HISTFILE=/app/log/.psql_history
-      - EDITOR=vi
-
+      - node_modules_app:/cartafact/node_modules
+      - packs:/cartafact/public/packs
+    tmpfs:
+      - /tmp
+    command: bash -c "mkdir -p tmp/pids && bundle exec puma -C config/puma.rb"
+    ports:
+      - '3000:3000'
     depends_on:
-      - postgres
-      - redis
+      - db
 
-  runner:
-    <<: *backend
-    command: /bin/bash
-    ports:
-      - '3000:3000'
-      - '3002:3002'
-
-  rails:
-    <<: *backend
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails server -p 3000 -b '0.0.0.0'"
-    ports:
-      - '3000:3000'
-
-  postgres:
-    image: postgres:11.1
+  db:
+    image: mongo:4.2
     volumes:
-      - .dockerdev/.psqlrc:/root/.psqlrc:ro
-      - postgres:/var/lib/postgresql/data
-      - ./log:/root/log:cached
-    environment:
-      - PSQL_HISTFILE=/root/log/.psql_history
+      - mongodb:/data/db
+      - mongodb_config:/data/configdb
     ports:
-      - 5432
-
-  redis:
-    image: redis:3.2-alpine
-    volumes:
-      - redis:/data
-    ports:
-      - 6379
+      - 27017
 
 volumes:
-  postgres:
-  redis:
   bundle:
   rails_cache:
+  node_modules_app:
+  packs:
+  mongodb:
+  mongodb_config:
 

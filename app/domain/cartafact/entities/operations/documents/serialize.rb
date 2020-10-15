@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Cartafact
   module Entities
     module Operations
       module Documents
+        # Serialize a document resource to a "showable" hash.
         class Serialize
-
           include Dry::Transaction::Operation
 
           def call(input)

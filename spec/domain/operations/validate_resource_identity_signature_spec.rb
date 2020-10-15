@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 module Cartafact
@@ -152,7 +154,7 @@ module Cartafact
           }
         end
 
-        let(:expected_value) do 
+        let(:expected_value) do
           Cartafact::Entities::RequestingIdentity.new(identity_data)
         end
 

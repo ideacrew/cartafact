@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Cartafact
   module Entities
     module Operations
       module Documents
+        # Shared operation for create/update of document.
         class Persist
-
           include Dry::Transaction::Operation
 
           def call(input)
@@ -24,11 +26,10 @@ module Cartafact
                 subject_type: subj[:type]
               }
             end
-            model_params.merge({:subjects => subject_params})
+            model_params.merge(:subjects => subject_params)
           end
         end
       end
     end
   end
 end
-

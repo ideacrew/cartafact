@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Cartafact::Entities::Operations::Documents::Where do
   let(:subject) { Cartafact::Entities::Operations::Documents::Where.new.call(authorization_information) }
-  let(:document) {FactoryBot.create(:document, subjects: [{subject_id: 'abc', subject_type: 'consumer'}])}
+  let(:document) { FactoryBot.create(:document, subjects: [{ subject_id: 'abc', subject_type: 'consumer' }]) }
 
   context 'with valid params but no matching documents' do
     let(:authorization_information) do
@@ -18,7 +20,6 @@ RSpec.describe Cartafact::Entities::Operations::Documents::Where do
   end
 
   context 'with valid params and matching documents' do
-
     let(:matching_subjects) do
       document.subjects.map do |d_sub|
         double(
@@ -40,11 +41,14 @@ RSpec.describe Cartafact::Entities::Operations::Documents::Where do
     end
 
     it "has documents json response" do
-      expect(subject.value!.first.keys.sort).to eq [:creator, :date, :description, :document_type, :extension, :format, :id, :identifier, :language, :size, :source, :subjects, :title, :version]
+      expect(subject.value!.first.keys.sort).to eq [
+        :creator, :date, :description, :document_type, :extension, :format, :id, :identifier,
+        :language, :size, :source, :subjects, :title, :version
+      ]
     end
 
     it "properly serializes the subjects" do
-      expect(subject.value!.first[:subjects]).to eq [{id: 'abc', type: 'consumer'}]
+      expect(subject.value!.first[:subjects]).to eq [{ id: 'abc', type: 'consumer' }]
     end
   end
 end
