@@ -130,7 +130,9 @@ module Api
       end
 
       def update_params
-        params.require(:document).permit(:path, :id)
+        params.require(:document)
+        params.permit(:content)
+        JSON.parse(params[:document]).to_h.merge(path: params[:content])
       end
 
       def verify_authorization_headers_present

@@ -10,20 +10,37 @@ module Cartafact
           end
 
           def call(input)
-            document = ::Document.where(
-              "_id" => bson_id_from_params(input[:id])
-            ).first
-            return Failure(:document_not_found) if document.empty?
-
-            if document.destroy!
-              Success()
-            else
-              Failure({errors: document.errors.to_h})
-            end
+            id = yield bson_id_from_params(input[:id])
+            document = yield get_document(id.value!)
+            action = yield destroy_document(document.value!)
+            Success()
           end
 
           def bson_id_from_params(id_string)
-            BSON::ObjectId.from_string(id_string)
+            Try do
+              Success(BSON::ObjectId.from_string(id_string))
+            end
+          end
+
+          def get_document(id)
+            Try do
+              document = ::Document.where(
+                "_id" => bson_id_from_params(id)
+              ).first
+
+              if document.present?
+                Success(document)
+              else
+                Failure(:document_not_found)
+              end
+            end
+          end
+
+          def destroy_document(document)
+            Try do
+              document.destroy!
+              Success()
+            end.or(Failure(document.errors.to_h))
           end
         end
       end
