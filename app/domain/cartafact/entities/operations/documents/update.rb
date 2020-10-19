@@ -5,6 +5,8 @@ module Cartafact
         class Update
           include Dry::Monads[:result]
 
+          # Use this operation to update document meta data.
+
           def self.call(input)
             self.new.call(input)
           end

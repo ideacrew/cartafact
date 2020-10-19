@@ -47,16 +47,24 @@ module Api
         end
       end
 
+      # update is delete & create new one
       def update
         authorization_information = verify_authorization_headers_present
         unless authorization_information
           return nil
         end
-        result = ::Cartafact::Entities::Operations::Documents::Update.call(update_params)
-        if result.success?
-          render :json => result.value!, status: :updated
+
+        # create new record only if destroy is succesful
+        destroyed = ::Cartafact::Entities::Operations::Documents::Destroy.call({id: params[:id]})
+        if destroyed.success?
+          created = ::Cartafact::Entities::Operations::Documents::Create.call(create_params)
+          if created.success?
+            render :json => created.value!, status: :created
+          else
+            render :json => created.failure, status: "422"
+          end
         else
-          render :json => result.failure, status: "422"
+          render :json => destroyed.failure, status: 404
         end
       end
 
@@ -67,10 +75,11 @@ module Api
         end
         result = ::Cartafact::Entities::Operations::Documents::Destroy.call({id: params[:id]})
         if result.success?
-          render :json => result.value!, status: :destroyed
+          render :json => {}, status: :ok
         else
-          render :json => result.failure, status: "422"
+          render :json => result.failure, status: 404
         end
+        return
       end
 
       def update_meta_data
@@ -124,12 +133,6 @@ module Api
       end
 
       def create_params
-        params.require(:document)
-        params.permit(:content)
-        JSON.parse(params[:document]).to_h.merge(path: params[:content])
-      end
-
-      def update_params
         params.require(:document)
         params.permit(:content)
         JSON.parse(params[:document]).to_h.merge(path: params[:content])
