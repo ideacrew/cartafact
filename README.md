@@ -53,7 +53,7 @@ headers: {
 
 ## Store a new document:
 
-POST /api​/v1​/documents
+Request - POST /api​/v1​/documents
 
 
 ```
@@ -90,6 +90,28 @@ body: {
 }
 ```
 
+Response - 
+
+```
+{
+  title: "untitled",
+  creator: "dchl",
+  identifier: "xyz",
+  description: "xyz",
+  language: "en",
+  format: "application/octet-stream",
+  source: "enroll_system",
+  date: nil,
+  document_type: "notice",
+  subjects: [{id: "abc", type: "Person"}],
+  version: nil,
+  id: "document Id reference from cartafact",
+  extension: "pdf",
+  size: 1503191,
+  mime_type: "application/pdf"
+}
+
+```
 ## Download document:
 
 GET /api​/v1​/documents/:id/download
@@ -115,7 +137,7 @@ id: 'id string'  # required
 
 ## Update a document:
 
-PUT /api/v1/documents/:id
+Request - PUT /api/v1/documents/:id
 
 
 ```
@@ -151,3 +173,28 @@ body: {
   file_data: string,                     # Optional.
 }
 ```
+
+Response - 
+
+```
+{
+  title: "untitled",
+  creator: "dchl",
+  identifier: "xyz",
+  description: "xyz",
+  language: "en",
+  format: "application/octet-stream",
+  source: "enroll_system",
+  date: nil,
+  document_type: "notice",
+  subjects: [{id: "abc", type: "Person"}],
+  version: nil,
+  id: "document Id reference from cartafact",
+  extension: "pdf",
+  size: 1503191,
+  mime_type: "application/pdf"
+}
+
+```
+
+
