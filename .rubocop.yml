@@ -22,6 +22,9 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Max: 300
 
+Metrics/ClassLength:
+  Max: 200
+
 Style/BlockComments:
   Exclude:
     - spec/spec_helper.rb
