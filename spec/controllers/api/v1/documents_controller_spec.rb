@@ -151,7 +151,9 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
         post :update, params: {
-          document: JSON.dump(document_type: ""), id: document.id, content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
+          document: JSON.dump(document_type: ""),
+          id: document.id,
+          content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
         }
       end
 
@@ -168,7 +170,9 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
           requesting_identity_signature_header: nil
         ).and_return(authorization_failed)
         post :update, params: {
-          document: JSON.dump(document_type: ""), id: document.id, content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
+          document: JSON.dump(document_type: ""),
+          id: document.id,
+          content: Rack::Test::UploadedFile.new(tempfile, "application/pdf")
         }
       end
 
@@ -254,7 +258,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
       let(:find_success) do
         double(
-          success?: true,
+          success?: true
         )
       end
 
@@ -264,7 +268,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
         allow(::Cartafact::Entities::Operations::Documents::Destroy).to receive(:call).with(
-          id: document.id,
+          id: document.id
         ).and_return(find_success)
         delete :destroy, params: { id: document.id }
       end
@@ -288,7 +292,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
       let(:find_failure) do
         double(
           success?: false,
-          failure: {errors: 'xyz'}
+          failure: { errors: 'xyz' }
         )
       end
 
@@ -298,7 +302,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
         allow(::Cartafact::Entities::Operations::Documents::Destroy).to receive(:call).with(
-          id: document.id,
+          id: document.id
         ).and_return(find_failure)
         delete :destroy, params: { id: document.id }
       end

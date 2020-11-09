@@ -50,12 +50,10 @@ module Api
       # update is delete & create new one
       def update
         authorization_information = verify_authorization_headers_present
-        unless authorization_information
-          return nil
-        end
+        return nil unless authorization_information
 
         # create new record only if destroy is succesful
-        destroyed = ::Cartafact::Entities::Operations::Documents::Destroy.call({id: params[:id]})
+        destroyed = ::Cartafact::Entities::Operations::Documents::Destroy.call({ id: params[:id] })
         if destroyed.success?
           created = ::Cartafact::Entities::Operations::Documents::Create.call(create_params)
           if created.success?
@@ -70,19 +68,14 @@ module Api
 
       def destroy
         authorization_information = verify_authorization_headers_present
-        unless authorization_information
-          return nil
-        end
-        result = ::Cartafact::Entities::Operations::Documents::Destroy.call({id: params[:id]})
+        return nil unless authorization_information
+
+        result = ::Cartafact::Entities::Operations::Documents::Destroy.call({ id: params[:id] })
         if result.success?
           render :json => {}, status: :ok
         else
           render :json => result.failure, status: 404
         end
-        return
-      end
-
-      def update_meta_data
       end
 
       include ActionController::Live

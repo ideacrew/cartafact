@@ -1,19 +1,22 @@
+# frozen_string_literal: true
+
 module Cartafact
   module Entities
     module Operations
       module Documents
+        # Destroy document
         class Destroy
           include Dry::Monads[:result, :do, :try, :maybe, :list]
 
           def self.call(input)
-            self.new.call(input)
+            new.call(input)
           end
 
           def call(input)
             id = yield bson_id_from_params(input[:id])
             document = yield get_document(id)
             action = yield destroy_document(document.value!)
-            Success()
+            Success(action)
           end
 
           def bson_id_from_params(id_string)
