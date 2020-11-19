@@ -69,7 +69,7 @@ class Document
   field :coverage, type: String
 
   # Conforms to ACCESS_RIGHTS above
-  field :rights, type: String
+  # field :rights, type: String
 
   field :tags, type: Array, default: []
 
@@ -92,7 +92,7 @@ class Document
 
   validates_presence_of :title, :creator, :publisher, :type, :format, :source, :language, :document_type
 
-  index({ "subjects.subject_type" => 1, "subjects.subject_id" => 1 }, name: :document_subject_search_index)
+  index({ "subjects.subject_type" => 1, "subjects.subject_id" => 1 }, name: "document_subject_search_index")
 
   def path=(input)
     self.file = input

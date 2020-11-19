@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: ./.docker/production/Dockerfile
       args:
-        RUBY_VERSION: '2.6.3'
-        BUNDLER_VERSION: '2.0.2'
+        RUBY_VERSION: '2.6.5'
+        BUNDLER_VERSION_OVERRIDE: '2.1.4'
     image: ideacrew/cartafact_app:${IMAGE_TAG:-test_prod}
     tmpfs:
       - /tmp

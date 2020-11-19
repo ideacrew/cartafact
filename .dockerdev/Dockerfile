@@ -2,7 +2,7 @@ ARG RUBY_VERSION
 FROM ruby:$RUBY_VERSION
 
 ARG PG_MAJOR
-ARG BUNDLER_VERSION
+ARG BUNDLER_VERSION_OVERRIDE
 # ARG NODE_MAJOR
 # ARG YARN_VERSION
 
@@ -40,9 +40,9 @@ ENV BUNDLE_APP_CONFIG=$BUNDLE_PATH \
   BUNDLE_BIN=$BUNDLE_PATH/bin
 ENV PATH /app/bin:$BUNDLE_BIN:$PATH
 
-# Upgrade RubyGems and install required Bundler version 
+# Upgrade RubyGems and install required Bundler version
 RUN gem update --system && \
-    gem install bundler:$BUNDLER_VERSION
+    gem install bundler:$BUNDLER_VERSION_OVERRIDE
 
 # Create a directory for the app code
 RUN mkdir -p /app

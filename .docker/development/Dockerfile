@@ -1,11 +1,14 @@
-FROM ruby:2.6.3 AS cartafact_base
+FROM ruby:2.6.5 AS cartafact_base
 
+LABEL author="IdeaCrew"
 
 ENV HOME /cartafact
 
 RUN mkdir -p $HOME
 
 WORKDIR $HOME
+
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 
 # Configure bundler and PATH
 ENV LANG=C.UTF-8 \
@@ -17,14 +20,14 @@ ENV BUNDLE_APP_CONFIG=$BUNDLE_PATH \
     BUNDLE_BIN=$BUNDLE_PATH/bin
 ENV PATH /cartafact/bin:$BUNDLE_BIN:$PATH
 
-ARG BUNDLER_VERSION
-
+ARG BUNDLER_VERSION_OVERRIDE
+RUN echo $BUNDLER_VERSION_OVERRIDE
 RUN apt-get update && \
     apt-get -yq dist-upgrade && \
-    apt-get install -y tzdata build-essential vim && \
+    apt-get install -y tzdata build-essential nodejs vim && \
     apt-get autoremove -y && \
-    gem update --system && \
-    gem install bundler:$BUNDLER_VERSION 
+    gem install bundler:$BUNDLER_VERSION_OVERRIDE && \
+    npm install --global yarn
 
 COPY . $HOME
 
