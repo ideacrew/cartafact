@@ -30,4 +30,8 @@ class DocumentSerializer
   attribute :size do |object|
     object.file&.size
   end
+
+  attribute :mime_type do |object|
+    object.file&.mime_type
+  end
 end

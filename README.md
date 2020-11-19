@@ -53,7 +53,7 @@ headers: {
 
 ## Store a new document:
 
-POST /api​/v1​/documents
+Request - POST /api​/v1​/documents
 
 
 ```
@@ -90,6 +90,28 @@ body: {
 }
 ```
 
+Response - 
+
+```
+{
+  title: "untitled",
+  creator: "dchl",
+  identifier: "xyz",
+  description: "xyz",
+  language: "en",
+  format: "application/octet-stream",
+  source: "enroll_system",
+  date: nil,
+  document_type: "notice",
+  subjects: [{id: "abc", type: "Person"}],
+  version: nil,
+  id: "document Id reference from cartafact",
+  extension: "pdf",
+  size: 1503191,
+  mime_type: "application/pdf"
+}
+
+```
 ## Download document:
 
 GET /api​/v1​/documents/:id/download
@@ -100,3 +122,79 @@ GET /api​/v1​/documents/:id/download
 id: string # Required.
 
 ```
+
+## Delete a document:
+
+DELETE /api/v1/documents/:id
+
+
+```
+id: 'id string'  # required
+  
+```
+
+
+
+## Update a document:
+
+Request - PUT /api/v1/documents/:id
+
+
+```
+body: {
+  document: {
+    subjects: [{
+      id: string,
+      type: string
+    }],
+    document_type: string
+  }.to_json,
+  content: 'uploaded file content here', # Required.
+  creator: string,                       # Required.
+  publisher: string,                     # Required.
+  type: string,                          # Required.
+  format: string,                        # Required.
+  source: string,                        # Required.
+  language: string,                      # Required.
+  date_submitted: date,                  # Required.
+  title: string,                         # Optional.
+  identifier: string,                    # Optional.
+  description: string,                   # Optional.
+  contributor: string,                   # Optional.
+  created: date,                         # Optional.
+  date_accepted: date,                   # Optional.
+  expire: date,                          # Optional.
+  relation: string,                      # Optional.
+  coverage: string,                      # Optional.
+  tags: string,                          # Optional.
+  rights: string,                        # Optional.
+  access_rights: string,                 # Optional.
+  extent: string,                        # Optional.
+  file_data: string,                     # Optional.
+}
+```
+
+Response - 
+
+```
+{
+  title: "untitled",
+  creator: "dchl",
+  identifier: "xyz",
+  description: "xyz",
+  language: "en",
+  format: "application/octet-stream",
+  source: "enroll_system",
+  date: nil,
+  document_type: "notice",
+  subjects: [{id: "abc", type: "Person"}],
+  version: nil,
+  id: "document Id reference from cartafact",
+  extension: "pdf",
+  size: 1503191,
+  mime_type: "application/pdf"
+}
+
+```
+
+

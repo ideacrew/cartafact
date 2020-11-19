@@ -14,12 +14,16 @@ Metrics/BlockLength:
   Exclude:
     - spec/**/*.rb
     - app/domain/cartafact/entities/validators/documents/**/*.rb
+  ExcludedMethods: ['describe', 'context']
 
 Metrics/MethodLength:
   Max: 20
 
 Metrics/ModuleLength:
   Max: 300
+
+Metrics/ClassLength:
+  Max: 200
 
 Style/BlockComments:
   Exclude:
