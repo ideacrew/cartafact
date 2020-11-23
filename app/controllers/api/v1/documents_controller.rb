@@ -11,7 +11,7 @@ module Api
         authorization_information = verify_authorization_headers_present
         return nil unless authorization_information
 
-        result = ::Cartafact::Entities::Operations::Documents::Where.call(authorization_information)
+        result = Documents::Where.new.call(authorization_information)
         if result.success?
           render :json => result.value!, status: :ok
         else
@@ -24,7 +24,7 @@ module Api
         authorization_information = verify_authorization_headers_present
         return nil unless authorization_information
 
-        result = ::Cartafact::Entities::Operations::Documents::Show.call(
+        result = Documents::Show.new.call(
           authorization: authorization_information,
           id: params[:id]
         )
@@ -39,7 +39,7 @@ module Api
         authorization_information = verify_authorization_headers_present
         return nil unless authorization_information
 
-        result = ::Cartafact::Entities::Operations::Documents::Create.call(create_params)
+        result = Documents::Create.new.call(create_params)
         if result.success?
           render :json => result.value!, status: :created
         else
@@ -53,9 +53,9 @@ module Api
         return nil unless authorization_information
 
         # create new record only if destroy is succesful
-        destroyed = ::Cartafact::Entities::Operations::Documents::Destroy.call({ id: params[:id] })
+        destroyed = Documents::Destroy.new.call({ id: params[:id] })
         if destroyed.success?
-          created = ::Cartafact::Entities::Operations::Documents::Create.call(create_params)
+          created = Documents::Create.new.call(create_params)
           if created.success?
             render :json => created.value!, status: :created
           else
@@ -70,7 +70,7 @@ module Api
         authorization_information = verify_authorization_headers_present
         return nil unless authorization_information
 
-        result = ::Cartafact::Entities::Operations::Documents::Destroy.call({ id: params[:id] })
+        result = Documents::Destroy.new.call({ id: params[:id] })
         if result.success?
           render :json => {}, status: :ok
         else
@@ -83,7 +83,7 @@ module Api
         authorization_information = verify_authorization_headers_present
         return nil unless authorization_information
 
-        result = ::Cartafact::Entities::Operations::Documents::Download.call(
+        result = Documents::Download.new.call(
           authorization: authorization_information,
           id: params[:id]
         )
@@ -136,7 +136,7 @@ module Api
         # req_identity_signature = "X-RequestingIdentitySignature"
         req_identity = request.headers["HTTP_X_REQUESTINGIDENTITY"]
         req_identity_signature = request.headers["HTTP_X_REQUESTINGIDENTITYSIGNATURE"]
-        validation = Cartafact::Operations::ValidateResourceIdentitySignature.call(
+        validation = ValidateResourceIdentitySignature.new.call(
           requesting_identity_header: req_identity,
           requesting_identity_signature_header: req_identity_signature
         )

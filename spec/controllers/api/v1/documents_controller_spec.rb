@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 
 RSpec.describe Api::V1::DocumentsController, type: :controller do
@@ -12,7 +10,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
   let(:key) { Rails.application.credentials[:enroll_dc] }
   let(:authorization_information) do
     instance_double(
-      Cartafact::Entities::RequestingIdentity,
+      RequestingIdentity,
       authorized_subjects: []
     )
   end
@@ -28,14 +26,14 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
   describe "#create" do
     context "succesful with valid params" do
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
         post :create, params: {
           document: JSON.dump(
             {
-              subjects: [{ id: 'abc', type: 'consumer' }],
+              subjects: [{ subject_id: 'abc', subject_type: 'consumer' }],
               document_type: 'vlp_doc',
               format: "application/pdf",
               creator: 'dc',
@@ -61,15 +59,16 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
       it "should create the file upload" do
         parsed_response = JSON.parse(response.body)
+
         document_id = parsed_response['id']
-        document = Document.find(BSON::ObjectId.from_string(document_id))
+        document = Documents::DocumentModel.find(BSON::ObjectId.from_string(document_id))
         expect(document.file.read).to eq "DATA GOES HERE"
       end
     end
 
     context "with invalid params" do
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
@@ -85,7 +84,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
     context "when unauthorized" do
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_failed)
@@ -99,17 +98,17 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
   end
 
   describe "#update" do
-    let(:document) { FactoryBot.create(:document) }
+    let(:document) { FactoryBot.create(:documents_document_model) }
     context "succesful with valid params" do
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
         post :update, params: {
           document: JSON.dump(
             {
-              subjects: [{ id: 'abc', type: 'consumer' }],
+              subjects: [{ subject_id: 'abc', subject_type: 'consumer' }],
               document_type: 'vlp_doc',
               format: "application/pdf",
               creator: 'dc',
@@ -138,15 +137,15 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
       it "should create the file upload" do
         parsed_response = JSON.parse(response.body)
         document_id = parsed_response['id']
-        document = Document.find(BSON::ObjectId.from_string(document_id))
+        document = Documents::DocumentModel.find(BSON::ObjectId.from_string(document_id))
         expect(document.file.read).to eq "DATA GOES HERE"
       end
     end
 
     context "with invalid params" do
-      let(:document) { FactoryBot.create(:document) }
+      let(:document) { FactoryBot.create(:documents_document_model) }
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
@@ -163,9 +162,9 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
     end
 
     context "when unauthorized" do
-      let(:document) { FactoryBot.create(:document) }
+      let(:document) { FactoryBot.create(:documents_document_model) }
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_failed)
@@ -183,7 +182,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
   end
 
   describe "#show" do
-    let(:document) { FactoryBot.create(:document) }
+    let(:document) { FactoryBot.create(:documents_document_model) }
     context "succesful with valid params" do
       let(:document_json) { {} }
 
@@ -195,11 +194,11 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
       end
 
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        allow(::Cartafact::Entities::Operations::Documents::Show).to receive(:call).with(
+        allow(Documents::Show).to receive(:call).with(
           id: document.id,
           authorization: authorization_information
         ).and_return(find_success)
@@ -234,11 +233,11 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
       end
 
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        allow(::Cartafact::Entities::Operations::Documents::Show).to receive(:call).with(
+        allow(Documents::Show).to receive(:call).with(
           id: document.id,
           authorization: authorization_information
         ).and_return(find_failure)
@@ -252,7 +251,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
   end
 
   describe "#destroy" do
-    let(:document) { FactoryBot.create(:document) }
+    let(:document) { FactoryBot.create(:documents_document_model) }
     context "succesful with valid params" do
       let(:document_json) { {} }
 
@@ -263,11 +262,11 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
       end
 
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        allow(::Cartafact::Entities::Operations::Documents::Destroy).to receive(:call).with(
+        allow(Documents::Destroy).to receive(:call).with(
           id: document.id
         ).and_return(find_success)
         delete :destroy, params: { id: document.id }
@@ -297,11 +296,11 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
       end
 
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        allow(::Cartafact::Entities::Operations::Documents::Destroy).to receive(:call).with(
+        allow(Documents::Destroy).to receive(:call).with(
           id: document.id
         ).and_return(find_failure)
         delete :destroy, params: { id: document.id }
@@ -330,11 +329,11 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
       end
 
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: requesting_identity_header_value,
           requesting_identity_signature_header: requesting_identity_signature_header_value
         ).and_return(authorization_successful)
-        allow(::Cartafact::Entities::Operations::Documents::Where).to receive(:call).with(
+        allow(Documents::Where).to receive(:call).with(
           authorization_information
         ).and_return(document_result)
         request.headers["X-RequestingIdentity"] = requesting_identity_header_value
@@ -354,7 +353,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
 
     context "failure with invalid params" do
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_failed)
@@ -370,7 +369,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
   describe "#download" do
     let(:document) do
       FactoryBot.create(
-        :document,
+        :documents_document_model,
         file: tempfile
       )
     end
@@ -384,7 +383,7 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
       end
 
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
@@ -427,11 +426,11 @@ RSpec.describe Api::V1::DocumentsController, type: :controller do
       end
 
       before :each do
-        allow(Cartafact::Operations::ValidateResourceIdentitySignature).to receive(:call).with(
+        allow(ValidateResourceIdentitySignature).to receive(:call).with(
           requesting_identity_header: nil,
           requesting_identity_signature_header: nil
         ).and_return(authorization_successful)
-        allow(::Cartafact::Entities::Operations::Documents::Download).to receive(:call).with(
+        allow(Documents::Download).to receive(:call).with(
           id: document.id,
           authorization: authorization_information
         ).and_return(download_failure)

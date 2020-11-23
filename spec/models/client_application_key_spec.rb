@@ -1,6 +1,4 @@
-# frozen_string_literal: true
-
-require "rails_helper"
+require 'rails_helper'
 
 describe ClientApplicationKey do
   describe "given an invalid signature" do
