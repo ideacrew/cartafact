@@ -1,7 +1,6 @@
 *.swp
 *.rbc
 capybara-*.html
-.rspec
 /log
 /tmp
 /db/*.sqlite3
@@ -12,6 +11,12 @@ capybara-*.html
 *.orig
 rerun.txt
 pickle-email-*.html
+
+.gem
+.bundle
+.local
+.DS_Store
+.bash_history
 
 # TODO Comment out this rule if you are OK with secrets being uploaded to the repo
 config/initializers/secret_token.rb

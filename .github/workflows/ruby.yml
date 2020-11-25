@@ -14,10 +14,10 @@ jobs:
       uses: wbari/start-mongoDB@v0.2
       with:
         mongoDBVersion: 3.6
-    - name: Set up Ruby 2.6.3
+    - name: Set up Ruby 2.6.5
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.6.3
+        ruby-version: 2.6.5
     - name: Cache Gems
       uses: actions/cache@v1
       with:

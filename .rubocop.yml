@@ -1,8 +1,14 @@
+require:
+  - rubocop-flexport
+
 AllCops:
-  TargetRubyVersion: 2.6.5
+  # TargetRubyVersion: 2.6.5
+  NewCops: enable
+  Exclude:
+    - "bin/**/*"
 
 Layout/LineLength:
-  Max: 120
+  Max: 80
 
 Bundler/OrderedGems:
   Enabled: false
@@ -17,10 +23,10 @@ Metrics/BlockLength:
   ExcludedMethods: ['describe', 'context']
 
 Metrics/MethodLength:
-  Max: 20
+  Max: 10
 
 Metrics/ModuleLength:
-  Max: 300
+  Max: 100
 
 Metrics/ClassLength:
   Max: 200
