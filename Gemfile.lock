@@ -119,6 +119,9 @@ GEM
       database_cleaner (~> 1.8.0)
       database_cleaner-mongo (~> 1.8.0)
       mongoid
+    debase (0.2.4.1)
+      debase-ruby_core_source (>= 0.10.2)
+    debase-ruby_core_source (0.10.10)
     deep_merge (1.2.1)
     diff-lcs (1.4.4)
     down (5.2.0)
@@ -321,9 +324,17 @@ GEM
       parser (>= 2.7.1.5)
     rubocop-git (0.1.3)
       rubocop (>= 0.24.1)
+    rubocop-rails (2.8.1)
+      activesupport (>= 4.2.0)
+      rack (>= 1.1)
+      rubocop (>= 0.87.0)
+    rubocop-rake (0.5.1)
+      rubocop
     rubocop-rspec (2.0.0)
       rubocop (~> 1.0)
       rubocop-ast (>= 1.1.0)
+    ruby-debug-ide (0.7.2)
+      rake (>= 0.8.1)
     ruby-progressbar (1.10.1)
     ruby_dep (1.5.0)
     shoulda-matchers (3.1.3)
@@ -371,11 +382,12 @@ DEPENDENCIES
   climate_control
   database_cleaner (~> 1.7)
   database_cleaner-mongoid
+  debase
   dry-matcher (~> 0.8)
   dry-monads (~> 1.3)
   dry-struct (~> 1.0)
   dry-validation (~> 1.5)
-  factory_bot_rails (~> 4.11)
+  factory_bot_rails
   fast_jsonapi
   jbuilder (~> 2.7)
   jwt (~> 2.2.1)
@@ -391,7 +403,10 @@ DEPENDENCIES
   rspec-rails (~> 4.0)
   rubocop
   rubocop-git
+  rubocop-rails
+  rubocop-rake
   rubocop-rspec
+  ruby-debug-ide
   shoulda-matchers (~> 3)
   shrine (~> 3.3)
   shrine-mongoid (~> 1.0)
