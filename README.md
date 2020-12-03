@@ -1,3 +1,7 @@
+[![Rails Style Guide](https://img.shields.io/badge/code_style-rubocop-brightgreen.svg)](https://github.com/rubocop-hq/rubocop-rails)
+
+[![Rails Style Guide](https://img.shields.io/badge/code_style-community-brightgreen.svg)](https://rails.rubystyle.guide)
+
 # What Cartafact is -
 
 This is a micro service that you can use to store/retreive/search documents.
@@ -90,7 +94,7 @@ body: {
 }
 ```
 
-Response - 
+Response -
 
 ```
 {
@@ -130,7 +134,7 @@ DELETE /api/v1/documents/:id
 
 ```
 id: 'id string'  # required
-  
+
 ```
 
 
@@ -174,7 +178,7 @@ body: {
 }
 ```
 
-Response - 
+Response -
 
 ```
 {
