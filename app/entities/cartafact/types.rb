@@ -35,11 +35,12 @@ module Cartafact::Types
   )
 
   # Enumerated list of Item types
-  ItemKind          = Types::Coercible::String.enum('account', 'folder', 'file')
   AccountKind       = Types::Coercible::String.default('account').enum('account')
-  FolderKind        = Types::Coercible::String.default('folder').enum('folder')
   FileKind          = Types::Coercible::String.default('file').enum('file')
-  FileStatusKind    = Types::Coercible::String.default('active').enum('active', 'trashed', 'deleted')
+  FolderKind        = Types::Coercible::String.default('folder').enum('folder')
+  ItemKind          = Types::Coercible::String.enum('account', 'folder', 'file')
+  ItemStatusKind    = Types::Coercible::String.default('active').enum('active', 'trashed', 'deleted')
+  VersionKind       = Types::Coercible::String.default('version').enum('version')
 
   YesNoUnknownKind  = Types::Coercible::Symbol.default(:no).enum(:yes, :no, :unknown, :refused)
   YesNoPartialKind  = Types::Coercible::Symbol.default(:no).enum(:yes, :no, :partial, :refused)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 #
-class Namespace < Dry::Struct
+class Docs::Namespace < Dry::Struct
 
   # @!attribute [r] ancestors
   # An ordered list of folder names that precede this Folder in the folder tree

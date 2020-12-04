@@ -2,18 +2,17 @@
 
 require "rails_helper"
 
-RSpec.describe Docs::FileContract do
+RSpec.describe Docs::FolderContract do
 
   let(:id)            { "abc123def" }
-  let(:name)          { "Priority Item" }
-  let(:description)   { "File entitiy description" }
-  let(:extension)     { "pdf" }
-  let(:format)        { "text/pdf" }
+  let(:name)          { "Folder entity name" }
+  let(:description)   { "Folder entitiy description" }
   let(:owner)         { attributes_for(:account) }
+  let(:created_by)    { attributes_for(:account) }
+  let(:namespace)     { attributes_for(:docs_namespace) }
 
   let(:kind)          { 'file' }
   let(:status)        { 'active' }
-  let(:sha1)          { "a9993e364706816aba3e25717850c26c9cd0d89d" }
   let(:size)          { 85478741128 }
   let(:tags)          { [attributes_for(:metadata_tag)] }
 
@@ -23,16 +22,15 @@ RSpec.describe Docs::FileContract do
   let(:trashed_at)    { created_at + 1.year }
   let(:purged_at)     { trashed_at + 1.day }
 
-
   let(:required_params) {
     {
       id: id,
       name: name,
-      format: format,
       owner: owner,
+      created_by: created_by,
+      namespace: namespace,
       kind: kind,
       status: status,
-      sha1: sha1,
       size: size,
       created_at: created_at,
       updated_at: updated_at,
@@ -42,7 +40,6 @@ RSpec.describe Docs::FileContract do
   let(:optional_params) {
     {
       description: description,
-      extension: extension,
       tags: tags,
       expires_at: expires_at,
       purged_at: purged_at,

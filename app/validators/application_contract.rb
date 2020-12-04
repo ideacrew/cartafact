@@ -17,4 +17,18 @@ class ApplicationContract < Dry::Validation::Contract
   # @param evaluator [Dry::Validation::Contract::Evaluator]
 
 
+  rule(:tags).each do |key, value|
+    if key? && value
+      result = Metadata::TagContract.new.call(value)
+      key.failure(text: "invalid tag", error: result.errors.to_h) if result&.failure?
+    end
+  end
+
+  rule(:owner, :created_by) do
+    if key? && value
+      result = AccountContract.new.call(value)
+      key.failure(text: "invalid account", error: result.errors.to_h) if result&.failure?
+    end
+  end
+
 end

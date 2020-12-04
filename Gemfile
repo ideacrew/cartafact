@@ -17,6 +17,7 @@ gem 'bootsnap',             '>= 1.4.2', require: false
 gem 'dry-matcher',          '~> 0.8'
 gem 'dry-monads',           '~> 1.3'
 gem 'dry-struct',           '~> 1.0'
+gem 'dry-transaction'
 gem 'dry-validation',       '~> 1.5'
 
 gem 'fast_jsonapi'

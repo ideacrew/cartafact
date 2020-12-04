@@ -76,11 +76,11 @@ class Docs::File < Dry::Struct
   # @return [DateTime]
   attribute :expires_at?,  Types::DateTime.optional.meta(omitttable: true)
 
-  # @!attribute [r] purges_at
+  # @!attribute [r] purged_at
   # The time when this File is expected to be permanently deleted from Trash.
   # May be null if expiration is not scheduled
   # @return [DateTime]
-  attribute :purges_at?,  Types::DateTime.optional
+  attribute :purged_at?,  Types::DateTime.optional
 
   # @!attribute [r] trashed_at
   # The time when this File was moved to Trash.
