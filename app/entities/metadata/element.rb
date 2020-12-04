@@ -2,7 +2,7 @@
 
 CARTAFACT_ELEMENT_NAMESPACE = 'http://cartafact.org/elements'
 
-class MetadataElement < Dry::Struct
+class Metadata::Element < Dry::Struct
 
   # @!attribute [r] key
   # A token appended to the URI of the Cartafact namespace to create the URI of the term

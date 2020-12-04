@@ -1,64 +1,8 @@
-require:
-  - rubocop-flexport
+AllCops: NewCops: enable
 
-AllCops:
-  # TargetRubyVersion: 2.6.5
-  NewCops: enable
-  Exclude:
-    - "bin/**/*"
-
-Layout/LineLength:
-  Max: 80
-
-Bundler/OrderedGems:
+Layout/EmptyLinesAroundClassBody:
   Enabled: false
-
-Metrics/AbcSize:
-  Max: 20
-
-Metrics/BlockLength:
-  Exclude:
-    - spec/**/*.rb
-    - app/domain/cartafact/entities/validators/documents/**/*.rb
-  ExcludedMethods: ['describe', 'context']
-
-Metrics/MethodLength:
-  Max: 10
-
-Metrics/ModuleLength:
-  Max: 100
-
-Metrics/ClassLength:
-  Max: 200
-
-Style/BlockComments:
-  Exclude:
-    - spec/spec_helper.rb
-
-Style/BracesAroundHashParameters:
+Layout/EmptyLinesAroundModuleBody:
   Enabled: false
-
-Style/Documentation:
-  Exclude:
-    - app/controllers/application_controller.rb
-    - app/mailers/application_mailer.rb
-    - config/application.rb
-    - spec/**/*_spec.rb
-
-Style/EmptyLiteral:
-  Enabled: false
-
-Style/ExpandPathArguments:
-  Enabled: false
-
-Style/HashSyntax:
-  Enabled: false
-
-Style/NumericLiterals:
-  Enabled: false
-
-Style/StringLiterals:
-  Enabled: false
-
-Style/SymbolArray:
+Layout/ExtraSpacing:
   Enabled: false

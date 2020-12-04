@@ -31,13 +31,13 @@ gem 'mongoid',              '~> 7.1.0'
 gem 'puma',                 '~> 4.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails',                '~> 6.0.2'
+gem 'rails',                '~> 6.0.3'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 
 # Settings, validation and dependency injection
-gem 'resource_registry', git: 'https://github.com/ideacrew/resource_registry.git', branch: 'branch_0.3.2'
+gem 'resource_registry', git: 'https://github.com/ideacrew/resource_registry.git', branch: 'branch_0.8.0'
 
 gem 'shrine',               '~> 3.3'
 gem 'shrine-mongoid',       '~> 1.0'
